@@ -11,3 +11,10 @@
 
 🎯 Mục tiêu:
 Phát triển một hệ thống thông minh giúp giảm tải công việc thủ công và nâng cao hiệu quả vận hành trong tổ chức.
+
+🧠 Thành viên:
+Nông Ngọc Hoàng
+Nguyễn Hồng Minh
+Nguyễn Đăng Khoa
+Trịnh Văn Hiếu
+Hoàng Gia Minh
