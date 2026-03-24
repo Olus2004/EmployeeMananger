@@ -1,0 +1,65 @@
+void main() {
+  ProjectIntro employeeManager = ProjectIntro(
+    name: 'Employee Management System (Hệ thống Quản lý Nhân sự & Dự án)',
+    techStack: ['C# .NET 8 (API Backend)', 'JavaScript/HTML/TailwindCSS (Frontend)'],
+    aiIntegrated: true,
+  );
+
+  employeeManager.startPresentation();
+}
+
+class ProjectIntro {
+  final String name;
+  final List<String> techStack;
+  final bool aiIntegrated;
+
+  ProjectIntro({
+    required this.name,
+    required this.techStack,
+    required this.aiIntegrated,
+  });
+
+  void startPresentation() {
+    print('=' * 60);
+    print('🚀 CHÀO MỪNG ĐẾN VỚI DỰ ÁN');
+    print('⭐ Tên dự án: $name');
+    print('=' * 60);
+    
+    print('\n🛠️  CÔNG NGHỆ SỬ DỤNG:');
+    for (var tech in techStack) {
+      print('   - $tech');
+    }
+
+    print('\n📌 TÍNH NĂNG CHÍNH (FEATURES):');
+    List<String> features = [
+      'Quản lý nhân viên cơ bản (CRUD) và phân luồng làm việc theo ca (Ngày/Đêm).',
+      'Timesheet Management: Điểm danh, quản lý trạng thái chuyên sâu (Nghỉ, Di chuyển, Làm Visa, v.v.).',
+      'Project & Area Management: Quản lý nhân sự theo từng dự án theo tháng (Project Month Feature).',
+      'UI/UX: Giao diện Enterprise SaaS hiện đại, tối giản với Dark Mode và linh hoạt trên Mobile.'
+    ];
+
+    for (int i = 0; i < features.length; i++) {
+      print('   ${i + 1}. ${features[i]}');
+    }
+
+    print('\n🤖 TÍCH HỢP AI AGENT:');
+    if (aiIntegrated) {
+      introduceAIAgent();
+    } else {
+      print('   - Đang trong lộ trình phát triển AI tương lai.');
+    }
+
+    print('\n' + '=' * 60);
+    print('🎉 Buổi giới thiệu dự án kết thúc! Trân trọng cảm ơn.');
+    print('=' * 60);
+  }
+
+  void introduceAIAgent() {
+    print('   [ALERTS]: Đã phát hiện OpenClaw AI tích hợp trong Backend!');
+    print('   >>> Vai trò: Trợ lý quản lý Web thông minh (Web Management Assistant).');
+    print('   >>> Chức năng:');
+    print('       + Tự động hoá các truy vấn quản trị thông qua API Connections.');
+    print('       + Đề xuất điều phối nhân sự nhanh chóng giữa các dự án (Project Month).');
+    print('       + Tương tác trực tiếp với quản trị viên để phân tích dữ liệu nhanh.');
+  }
+}
