@@ -1,11 +1,12 @@
-✨ Behind every great project is a powerful team  
+## 🤖 AI-Powered Human Resource Management System
 
-👑 Our Members:
+A modern Human Resource Management system integrated with AI Agents, designed to optimize workforce management, automate processes, and enhance decision-making.
 
-- 🧑‍💻 Nông Ngọc Hoàng  
-- 🧑‍💻 Nguyễn Hồng Minh  
-- 🧑‍💻 Nguyễn Đăng Khoa  
-- 🧑‍💻 Trịnh Văn Hiếu  
-- 🧑‍💻 Hoàng Gia Minh  
+💡 Key Features:
+- 📊 Employee data management
+- 🤖 AI Agent for smart assistance & automation
+- 📈 Performance tracking & analytics
+- ⚡ Process optimization
 
-🚀 Together, we collaborate, innovate, and build impactful solutions.
+🎯 Our goal:
+Build an intelligent HR system that reduces manual workload and improves organizational efficiency.
