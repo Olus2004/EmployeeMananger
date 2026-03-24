@@ -1,8 +1,11 @@
-# EmployeeMananger
+✨ Behind every great project is a powerful team  
 
-#Thành viên trong nhóm
-- Nông Ngọc Hoàng
-- Nguyễn Hồng Minh
-- Nguyễn Đăng Khoa
-- Trịnh Văn Hiếu
-- Hoàng Gia Minh
+👑 Our Members:
+
+- 🧑‍💻 Nông Ngọc Hoàng  
+- 🧑‍💻 Nguyễn Hồng Minh  
+- 🧑‍💻 Nguyễn Đăng Khoa  
+- 🧑‍💻 Trịnh Văn Hiếu  
+- 🧑‍💻 Hoàng Gia Minh  
+
+🚀 Together, we collaborate, innovate, and build impactful solutions.
