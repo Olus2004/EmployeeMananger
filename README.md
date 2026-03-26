@@ -64,7 +64,7 @@ This is a modern HR management system designed to optimize enterprise operations
 
 ## 🧠 Thành viên thực hiện | Team Members
 
-Dự án được phát triển bởi đội ngũ kỹ sư tài năng:
+Dự án được phát triển bởi
 
 - 👤 **Nông Ngọc Hoàng**
 - 👤 **Nguyễn Hồng Minh**
