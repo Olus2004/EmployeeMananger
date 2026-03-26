@@ -3,7 +3,7 @@
 
 [![.NET](https://img.shields.io/badge/.NET%20Core%208.0-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=c-sharp&logoColor=white)](https://docs.microsoft.com/en-us/dotnet/csharp/)
-[![SQL Server](https://img.shields.io/badge/SQL%20Server-CC2927?style=for-the-badge&logo=microsoft-sql-server&logoColor=white)](https://www.microsoft.com/en-us/sql-server/)
+[![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![OpenClaw AI](https://img.shields.io/badge/AI%20Agent-OpenClaw-FF6B6B?style=for-the-badge&logo=openai&logoColor=white)](https://github.com/OpenClaw)
@@ -43,10 +43,10 @@ This is a modern HR management system designed to optimize enterprise operations
 ## 🛠️ Công nghệ sử dụng | Tech Stack
 
 - **Backend:** ASP.NET Core API, Entity Framework Core (Clean Architecture).
-- **Database:** Microsoft SQL Server.
+- **Database:** MySQL.
 - **Frontend:** Vanilla JavaScript (ES6+), HTML5, CSS3, Tailwind CSS.
 - **UI Components:** Font Awesome 6.4.0, Flatpickr.
-- **Tools:** Git, Visual Studio, SQL Server Management Studio.
+- **Tools:** Git, Visual Studio, MySQL Workbench / Navicat.
 
 ---
 
