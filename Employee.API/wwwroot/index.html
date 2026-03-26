@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Management System</title>
+    <meta name="description" content="Hệ thống quản lý nhân viên - Employee Management System">
+    <link rel="stylesheet" href="index.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {}
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="translation.js"></script>
+</head>
+
+<body class="antialiased text-slate-800">
+
+    <!-- ==================== LOGIN PAGE ==================== -->
+    <div id="loginPage" class="gradient-bg min-h-screen flex items-center justify-center p-4">
+        <div class="glass-effect w-full max-w-md p-8 animate-fade-in">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                    <i class="fas fa-shield-alt text-white text-2xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold" data-i18n="login.title">Đăng nhập Hệ thống</h1>
+                <p class="text-slate-500 mt-2 text-sm" data-i18n="login.subtitle">Quản lý nhân viên thông minh</p>
+            </div>
+            <form id="loginForm" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2" data-i18n="login.username">Tên đăng
+                        nhập</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="fas fa-user text-slate-400"></i>
+                        </div>
+                        <input type="text" id="loginUsername" class="input-premium w-full pl-11"
+                            placeholder="Nhập tên đăng nhập" data-i18n-placeholder="login.usernamePlaceholder" required>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2" data-i18n="login.password">Mật
+                        khẩu</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-slate-400"></i>
+                        </div>
+                        <input type="password" id="loginPassword" class="input-premium w-full pl-11"
+                            placeholder="Nhập mật khẩu" data-i18n-placeholder="login.passwordPlaceholder" required>
+                    </div>
+                </div>
+                <div id="loginError"
+                    class="hidden bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg text-sm">
+                    <i class="fas fa-exclamation-circle mr-2"></i><span id="loginErrorText"></span>
+                </div>
+                <button type="submit" class="btn-primary w-full py-3 text-base">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span data-i18n="login.submit">Đăng nhập</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== MAIN PAGE ==================== -->
+    <div id="mainPage" class="hidden min-h-screen flex">
+
+        <!-- Mobile Menu Button -->
+        <button id="mobileMenuBtn" onclick="toggleSidebar()"
+            class="lg:hidden fixed top-4 left-4 z-50 w-10 h-10 bg-white rounded-xl shadow-lg flex items-center justify-center border border-slate-200">
+            <i class="fas fa-bars text-xl"></i>
+        </button>
+        <div id="mobileOverlay" class="hidden fixed inset-0 bg-black/50 z-40 lg:hidden" onclick="toggleSidebar()"></div>
+
+        <!-- ========== SIDEBAR ========== -->
+        <div id="sidebar"
+            class="w-64 min-h-screen flex flex-col flex-shrink-0 transition-all duration-300 fixed lg:relative z-40 transform -translate-x-full lg:translate-x-0">
+            <!-- Logo -->
+            <div class="h-16 flex items-center px-6 border-b border-slate-100 dark:border-slate-800 mb-2">
+                <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center mr-3 shadow">
+                    <i class="fas fa-layer-group text-white text-sm"></i>
+                </div>
+                <span class="font-bold text-slate-800 dark:text-white text-lg tracking-tight"
+                    data-i18n="sidebar.management">Quản Lý</span>
+            </div>
+
+            <!-- Nav -->
+            <nav class="flex-1 overflow-y-auto px-4 space-y-1 mt-2">
+                <p class="px-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-2"
+                    data-i18n="sidebar.menu">Menu</p>
+                <button onclick="showDashboard(event)"
+                    class="w-full text-left px-4 py-3 rounded-xl font-semibold text-slate-600 dark:text-slate-300 flex items-center space-x-3 group active-link">
+                    <i class="fas fa-chart-pie w-6 text-center text-slate-400"></i>
+                    <span class="sidebar-text text-sm" data-i18n="sidebar.dashboard">Dashboard</span>
+                </button>
+                <button onclick="showUserManagement(event)"
+                    class="w-full text-left px-4 py-3 rounded-xl font-semibold text-slate-600 dark:text-slate-300 flex items-center space-x-3 group">
+                    <i class="fas fa-users w-6 text-center text-slate-400"></i>
+                    <span class="sidebar-text text-sm" data-i18n="sidebar.accounts">Tài khoản</span>
+                </button>
+                <button onclick="showEmployeeManagement(event)"
+                    class="w-full text-left px-4 py-3 rounded-xl font-semibold text-slate-600 dark:text-slate-300 flex items-center space-x-3 group">
+                    <i class="fas fa-id-card w-6 text-center text-slate-400"></i>
+                    <span class="sidebar-text text-sm" data-i18n="sidebar.employees">Nhân viên</span>
+                </button>
+                <button onclick="showTimesheetManagement(event)"
+                    class="w-full text-left px-4 py-3 rounded-xl font-semibold text-slate-600 dark:text-slate-300 flex items-center space-x-3 group">
+                    <i class="fas fa-calendar-check w-6 text-center text-slate-400"></i>
+                    <span class="sidebar-text text-sm" data-i18n="sidebar.timesheets">Bảng công</span>
+                </button>
+                <button onclick="showAreaManagement(event)"
+                    class="w-full text-left px-4 py-3 rounded-xl font-semibold text-slate-600 dark:text-slate-300 flex items-center space-x-3 group">
+                    <i class="fas fa-map-marker-alt w-6 text-center text-slate-400"></i>
+                    <span class="sidebar-text text-sm" data-i18n="sidebar.areas">Khu vực</span>
+                </button>
+                <button onclick="showProjectManagement(event)"
+                    class="w-full text-left px-4 py-3 rounded-xl font-semibold text-slate-600 dark:text-slate-300 flex items-center space-x-3 group">
+                    <i class="fas fa-project-diagram w-6 text-center text-slate-400"></i>
+                    <span class="sidebar-text text-sm" data-i18n="sidebar.projects">Dự án</span>
+                </button>
+                <button onclick="showFeedbackManagement(event)"
+                    class="w-full text-left px-4 py-3 rounded-xl font-semibold text-slate-600 dark:text-slate-300 flex items-center space-x-3 group">
+                    <i class="fas fa-comments w-6 text-center text-slate-400"></i>
+                    <span class="sidebar-text text-sm" data-i18n="sidebar.feedback">Phản hồi</span>
+                </button>
+                <div class="pt-4 border-t border-slate-100 dark:border-slate-800 my-4"></div>
+                <p class="px-4 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2"
+                    data-i18n="sidebar.tools">Công cụ</p>
+                <button onclick="showExcelManagement(event)"
+                    class="w-full text-left px-4 py-3 rounded-xl font-semibold text-slate-600 dark:text-slate-300 flex items-center space-x-3 group">
+                    <i class="fas fa-file-excel w-6 text-center text-slate-400"></i>
+                    <span class="sidebar-text text-sm" data-i18n="sidebar.excel">Import/Export Excel</span>
+                </button>
+            </nav>
+
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer p-5">
+                <div class="flex items-center px-2 mb-5">
+                    <div
+                        class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-400 flex items-center justify-center mr-3 shadow-lg">
+                        <i class="fas fa-user-tie text-white text-sm"></i>
+                    </div>
+                    <div class="flex flex-col min-w-0">
+                        <span id="currentUsername" class="text-sm font-bold truncate"
+                            style="color: var(--text-main)">Admin</span>
+                        <span class="text-[10px] uppercase tracking-wider font-bold" style="color: var(--text-muted)"
+                            data-i18n="user.roleAdmin">Quản trị viên</span>
+                    </div>
+                </div>
+                <div class="space-y-1">
+                    <button onclick="toggleTheme()"
+                        class="sidebar-footer-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold">
+                        <div class="flex items-center space-x-3">
+                            <i id="themeIcon" class="fas fa-moon w-5 text-center"></i>
+                            <span data-i18n="sidebar.theme">Chế độ tối</span>
+                        </div>
+                        <span class="bg-blue-100 text-blue-600 px-2 py-0.5 rounded-lg text-[10px] font-bold"
+                            id="themeStatusDisplay">OFF</span>
+                    </button>
+                    <button onclick="toggleLanguage()"
+                        class="sidebar-footer-btn w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-globe w-5 text-center"></i>
+                            <span data-i18n="sidebar.language">Ngôn ngữ</span>
+                        </div>
+                        <span class="bg-blue-100 text-blue-600 px-2 py-0.5 rounded-lg text-[10px] font-bold"
+                            id="currentLanguageDisplay">VI</span>
+                    </button>
+                    <button type="button" onclick="logout()" data-action="logout"
+                        class="sidebar-footer-btn w-full flex items-center px-3 py-2.5 rounded-xl text-sm font-semibold group hover:!bg-red-50 hover:!text-red-600">
+                        <i class="fas fa-sign-out-alt w-6 text-center group-hover:text-red-500 mr-2"></i>
+                        <span data-i18n="sidebar.logout">Đăng xuất</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== MAIN CONTENT ========== -->
+        <div class="flex-1 overflow-auto min-h-screen">
+
+            <!-- ===== DASHBOARD ===== -->
+            <div id="dashboardSection" class="fade-in p-4 md:p-8 min-h-full">
+                <!-- Header -->
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-800 dark:text-white" data-i18n="dashboard.title">
+                            Dashboard</h1>
+                        <p class="text-slate-500 text-sm mt-1" data-i18n="dashboard.subtitle">Tổng quan hệ thống</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <input type="date" id="dailyAttendanceDate" onchange="refreshDashboardWithDate()"
+                            class="input-premium text-sm">
+                    </div>
+                </div>
+
+                <!-- Attendance Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+                    <div class="glass-card flex items-center gap-4">
+                        <div class="stat-icon bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600"><i
+                                class="fas fa-briefcase"></i></div>
+                        <div>
+                            <p class="text-xs text-slate-500 font-semibold" data-i18n="dashboard.totalWorking">Đi làm
+                                hôm nay</p>
+                            <p id="dashboardTotalWorking" class="text-2xl font-bold text-slate-800 dark:text-white">0
+                            </p>
+                        </div>
+                    </div>
+                    <div class="glass-card flex items-center gap-4">
+                        <div class="stat-icon bg-amber-100 dark:bg-amber-500/10 text-amber-600"><i
+                                class="fas fa-sun"></i></div>
+                        <div>
+                            <p class="text-xs text-slate-500 font-semibold" data-i18n="dashboard.dayShift">Ca ngày</p>
+                            <p id="dashboardDayShift" class="text-2xl font-bold text-slate-800 dark:text-white">0</p>
+                        </div>
+                    </div>
+                    <div class="glass-card flex items-center gap-4">
+                        <div class="stat-icon bg-indigo-100 dark:bg-indigo-500/10 text-indigo-600"><i
+                                class="fas fa-moon"></i></div>
+                        <div>
+                            <p class="text-xs text-slate-500 font-semibold" data-i18n="dashboard.nightShift">Ca đêm</p>
+                            <p id="dashboardNightShift" class="text-2xl font-bold text-slate-800 dark:text-white">0</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- ===== DAILY ATTENDANCE ===== -->
+                <div class="glass-card mb-8">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2"
+                                id="dailyStatsMonthLabel" data-i18n="daily.title">
+                                <i class="fas fa-calendar-check text-blue-600"></i> Điểm danh trong ngày
+                            </h2>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="relative">
+                                <input type="text" id="searchDailyEmployee" oninput="filterDailyEmployees()"
+                                    class="input-premium pl-10 w-64" placeholder="Tìm kiếm..."
+                                    data-i18n-placeholder="common.search">
+                                <i
+                                    class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats for Daily -->
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+                        <div class="bg-blue-50 dark:bg-blue-500/10 rounded-xl p-3 flex items-center gap-3">
+                            <div class="stat-icon-sm bg-blue-100 text-blue-600"><i class="fas fa-users"></i></div>
+                            <div>
+                                <p class="text-[10px] text-slate-500 font-bold" data-i18n="daily.total">Tổng</p>
+                                <p id="dailyTotalCount" class="text-lg font-bold text-slate-800 dark:text-white">0</p>
+                            </div>
+                        </div>
+                        <div class="bg-emerald-50 dark:bg-emerald-500/10 rounded-xl p-3 flex items-center gap-3">
+                            <div class="stat-icon-sm bg-emerald-100 text-emerald-600"><i class="fas fa-check"></i></div>
+                            <div>
+                                <p class="text-[10px] text-emerald-600 font-bold" data-i18n="daily.present">Đã ĐD</p>
+                                <p id="dailyAttendedCount"
+                                    class="text-lg font-bold text-emerald-700 dark:text-emerald-400">0</p>
+                            </div>
+                        </div>
+                        <div class="bg-amber-50 dark:bg-amber-500/10 rounded-xl p-3 flex items-center gap-3">
+                            <div class="stat-icon-sm bg-amber-100 text-amber-600"><i class="fas fa-clock"></i></div>
+                            <div>
+                                <p class="text-[10px] text-amber-600 font-bold" data-i18n="daily.absent">Chưa ĐD</p>
+                                <p id="dailyRemainingCount"
+                                    class="text-lg font-bold text-amber-700 dark:text-amber-400">0</p>
+                            </div>
+                        </div>
+                        <div class="bg-indigo-50 dark:bg-indigo-500/10 rounded-xl p-3 flex items-center gap-3">
+                            <div
+                                class="stat-icon-sm bg-indigo-100 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400">
+                                <i class="fas fa-flag"></i></div>
+                            <div>
+                                <p class="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold"
+                                    data-i18n="daily.vnCount">VN</p>
+                                <p id="dailyVNCount" class="text-lg font-bold text-indigo-700 dark:text-indigo-300">0
+                                </p>
+                            </div>
+                        </div>
+                        <div class="bg-rose-50 dark:bg-rose-500/10 rounded-xl p-3 flex items-center gap-3">
+                            <div class="stat-icon-sm bg-rose-100 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400">
+                                <i class="fas fa-flag"></i></div>
+                            <div>
+                                <p class="text-[10px] text-rose-600 dark:text-rose-400 font-bold"
+                                    data-i18n="daily.cnCount">CN</p>
+                                <p id="dailyCNCount" class="text-lg font-bold text-rose-700 dark:text-rose-300">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Daily Table -->
+                    <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th data-i18n="employee.name">Nhân viên</th>
+                                    <th data-i18n="employee.area">Khu vực</th>
+                                    <th data-i18n="employee.project">Dự án</th>
+                                    <th data-i18n="user.status">Trạng thái</th>
+                                    <th data-i18n="daily.columns.start">Giờ vào</th>
+                                    <th data-i18n="daily.columns.end">Giờ ra</th>
+                                    <th class="text-center" data-i18n="common.action">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dailyAttendanceTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Attendance by Project Table -->
+                <div class="glass-card mb-8">
+                    <h2 class="text-lg font-bold text-slate-800 dark:text-white mb-4"
+                        data-i18n="dashboard.attendanceByProject">Đi làm theo dự án</h2>
+                    <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th data-i18n="project.name">Dự án</th>
+                                    <th data-i18n="dashboard.dayShift">Ca ngày</th>
+                                    <th data-i18n="dashboard.nightShift">Ca đêm</th>
+                                    <th data-i18n="common.total">Tổng</th>
+                                    <th data-i18n="common.action">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendanceByProjectBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Absence by Project Table -->
+                <div class="glass-card">
+                    <h2 class="text-lg font-bold text-slate-800 dark:text-white mb-4"
+                        data-i18n="dashboard.absenceByProject">Nghỉ theo dự án</h2>
+                    <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th data-i18n="project.name">Dự án</th>
+                                    <th data-i18n="dashboard.dayShift">Ca ngày</th>
+                                    <th data-i18n="dashboard.nightShift">Ca đêm</th>
+                                    <th data-i18n="common.total">Tổng</th>
+                                    <th data-i18n="common.action">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="absenceByProjectBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== USER MANAGEMENT ===== -->
+            <div id="userManagementSection" class="hidden fade-in p-4 md:p-8 min-h-full">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-800 dark:text-white" data-i18n="user.management">Quản
+                            lý Tài khoản</h1>
+                        <p class="text-slate-500 text-sm mt-1" data-i18n="user.managementDesc">Quản lý tài khoản người
+                            dùng</p>
+                    </div>
+                    <button onclick="showCreateUserModal()" class="btn-primary"><i class="fas fa-plus"></i><span
+                            data-i18n="user.add">Thêm Tài khoản</span></button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+                    <div class="glass-card flex items-center gap-4">
+                        <div class="stat-icon bg-blue-100 dark:bg-blue-500/10 text-blue-600"><i
+                                class="fas fa-users"></i></div>
+                        <div>
+                            <p class="text-xs text-slate-500 font-semibold" data-i18n="user.total">Tổng tài khoản</p>
+                            <p id="totalUsers" class="text-2xl font-bold text-slate-800 dark:text-white">0</p>
+                        </div>
+                    </div>
+                    <div class="glass-card flex items-center gap-4">
+                        <div class="stat-icon bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600"><i
+                                class="fas fa-check-circle"></i></div>
+                        <div>
+                            <p class="text-xs text-slate-500 font-semibold" data-i18n="user.activeCount">Hoạt động</p>
+                            <p id="activeUsers" class="text-2xl font-bold text-slate-800 dark:text-white">0</p>
+                        </div>
+                    </div>
+                    <div class="glass-card flex items-center gap-4">
+                        <div class="stat-icon bg-slate-200 dark:bg-slate-700 text-slate-500"><i class="fas fa-ban"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 font-semibold" data-i18n="user.inactiveCount">Không hoạt
+                                động</p>
+                            <p id="inactiveUsers" class="text-2xl font-bold text-slate-800 dark:text-white">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card !p-0 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th data-i18n="common.id">ID</th>
+                                    <th data-i18n="user.username">Tên đăng nhập</th>
+                                    <th data-i18n="user.status">Trạng thái</th>
+                                    <th data-i18n="common.createdAt">Ngày tạo</th>
+                                    <th data-i18n="common.action">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== EMPLOYEE MANAGEMENT ===== -->
+            <div id="employeeManagementSection" class="hidden fade-in p-4 md:p-8 min-h-full">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-800 dark:text-white" data-i18n="employee.management">
+                            Quản lý Nhân viên</h1>
+                        <p class="text-slate-500 text-sm mt-1" data-i18n="employee.managementDesc">Quản lý thông tin
+                            nhân viên</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <div class="relative">
+                            <input type="text" id="searchEmployee" oninput="filterEmployees()"
+                                class="input-premium pl-10 w-64" placeholder="Tìm kiếm..."
+                                data-i18n-placeholder="employee.searchPlaceholder">
+                            <i
+                                class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        </div>
+                        <div id="employeeBulkActions" class="hidden flex items-center gap-2">
+                            <span id="employeeSelectedCount" class="text-sm font-bold text-slate-600"></span>
+                            <button onclick="deleteSelectedEmployees()"
+                                class="btn-premium text-red-500 text-sm hover:bg-red-50"><i
+                                    class="fas fa-trash"></i><span data-i18n="employee.deleteSelected">Xóa đã
+                                    chọn</span></button>
+                        </div>
+                        <button onclick="showCreateEmployeeModal()" class="btn-primary"><i class="fas fa-plus"></i><span
+                                data-i18n="employee.add">Thêm</span></button>
+                    </div>
+                </div>
+                <!-- Date Filter -->
+                <div class="glass-card mb-6 flex flex-wrap items-center gap-4">
+                    <span class="text-sm font-semibold text-slate-600 dark:text-slate-300"
+                        data-i18n="employee.dateFilter">Lọc theo ngày:</span>
+                    <input type="date" id="employeeFilterStartDate" class="input-premium text-sm w-auto">
+                    <span class="text-slate-400">→</span>
+                    <input type="date" id="employeeFilterEndDate" class="input-premium text-sm w-auto">
+                    <button onclick="applyEmployeeDateFilter()" class="btn-primary text-sm py-2"><i
+                            class="fas fa-filter"></i><span data-i18n="common.apply">Áp dụng</span></button>
+                    <button onclick="clearEmployeeDateFilter()" class="btn-premium text-sm py-2"><i
+                            class="fas fa-times"></i><span data-i18n="common.clear">Xóa</span></button>
+                </div>
+
+                <!-- Table -->
+                <div class="glass-card !p-0 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAllEmployees"
+                                            onchange="toggleSelectAllEmployees(this)"></th>
+                                    <th data-i18n="common.id">ID</th>
+                                    <th data-i18n="employee.name">Họ tên</th>
+                                    <th data-i18n="employee.type">Loại</th>
+                                    <th data-i18n="employee.area">Khu vực</th>
+                                    <th data-i18n="employee.workDays">Đi làm</th>
+                                    <th data-i18n="employee.leaveDays">Nghỉ</th>
+                                    <th data-i18n="common.total">Tổng</th>
+                                    <th data-i18n="employee.project">Dự án</th>
+                                    <th data-i18n="user.status">Trạng thái</th>
+                                    <th data-i18n="common.action">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="employeeTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== TIMESHEET MANAGEMENT ===== -->
+            <div id="timesheetManagementSection" class="hidden fade-in p-4 md:p-8 min-h-full">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-800 dark:text-white" data-i18n="timesheet.management">
+                            Quản lý Bảng công</h1>
+                        <p class="text-slate-500 text-sm mt-1" data-i18n="timesheet.managementDesc">Quản lý bảng chấm
+                            công nhân viên</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <div id="timesheetBulkActions" class="hidden flex items-center gap-2">
+                            <span id="timesheetSelectedCount" class="text-sm font-bold text-slate-600"></span>
+                            <button onclick="deleteSelectedTimesheets()"
+                                class="btn-premium text-red-500 text-sm hover:bg-red-50"><i
+                                    class="fas fa-trash"></i><span data-i18n="common.deleteSelected">Xóa đã
+                                    chọn</span></button>
+                        </div>
+                        <button onclick="showCreateTimesheetModal()" class="btn-primary"><i
+                                class="fas fa-plus"></i><span data-i18n="timesheet.add">Thêm Bảng công</span></button>
+                    </div>
+                </div>
+                <!-- Stats -->
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8">
+                    <div class="glass-card flex items-center gap-3">
+                        <div class="stat-icon-sm bg-blue-100 text-blue-600"><i class="fas fa-calendar"></i></div>
+                        <div>
+                            <p class="text-[10px] text-slate-500 font-bold" data-i18n="timesheet.total">Tổng</p>
+                            <p id="totalTimesheets" class="text-xl font-bold text-slate-800 dark:text-white">0</p>
+                        </div>
+                    </div>
+                    <div class="glass-card flex items-center gap-3">
+                        <div class="stat-icon-sm bg-emerald-100 text-emerald-600"><i class="fas fa-check-circle"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-slate-500 font-bold" data-i18n="timesheet.status1">Đi làm</p>
+                            <p id="status1Count" class="text-xl font-bold text-slate-800 dark:text-white">0</p>
+                        </div>
+                    </div>
+                    <div class="glass-card flex items-center gap-3">
+                        <div class="stat-icon-sm bg-rose-100 text-rose-600"><i class="fas fa-ban"></i></div>
+                        <div>
+                            <p class="text-[10px] text-slate-500 font-bold" data-i18n="timesheet.status2">Nghỉ</p>
+                            <p id="status2Count" class="text-xl font-bold text-slate-800 dark:text-white">0</p>
+                        </div>
+                    </div>
+                    <div class="glass-card flex items-center gap-3">
+                        <div class="stat-icon-sm bg-amber-100 text-amber-600"><i class="fas fa-file-signature"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-slate-500 font-bold" data-i18n="timesheet.status3">Xin nghỉ</p>
+                            <p id="status3Count" class="text-xl font-bold text-slate-800 dark:text-white">0</p>
+                        </div>
+                    </div>
+                    <div class="glass-card flex items-center gap-3">
+                        <div class="stat-icon-sm bg-sky-100 text-sky-600"><i class="fas fa-truck-moving"></i></div>
+                        <div>
+                            <p class="text-[10px] text-slate-500 font-bold" data-i18n="timesheet.status4">Di chuyển</p>
+                            <p id="status4Count" class="text-xl font-bold text-slate-800 dark:text-white">0</p>
+                        </div>
+                    </div>
+                    <div class="glass-card flex items-center gap-3">
+                        <div class="stat-icon-sm bg-teal-100 text-teal-600"><i class="fas fa-passport"></i></div>
+                        <div>
+                            <p class="text-[10px] text-slate-500 font-bold" data-i18n="timesheet.status5">Làm visa</p>
+                            <p id="status5Count" class="text-xl font-bold text-slate-800 dark:text-white">0</p>
+                        </div>
+                    </div>
+                    <div class="glass-card flex items-center gap-3">
+                        <div class="stat-icon-sm bg-indigo-100 text-indigo-600"><i
+                                class="fas fa-chalkboard-teacher"></i></div>
+                        <div>
+                            <p class="text-[10px] text-slate-500 font-bold" data-i18n="timesheet.status6">Đào tạo</p>
+                            <p id="status6Count" class="text-xl font-bold text-slate-800 dark:text-white">0</p>
+                        </div>
+                    </div>
+                    <div class="glass-card flex items-center gap-3">
+                        <div class="stat-icon-sm bg-pink-100 text-pink-600"><i class="fas fa-user-shield"></i></div>
+                        <div>
+                            <p class="text-[10px] text-slate-500 font-bold" data-i18n="timesheet.status7">Mở quyền hạn
+                            </p>
+                            <p id="status7Count" class="text-xl font-bold text-slate-800 dark:text-white">0</p>
+                        </div>
+                    </div>
+                    <div class="glass-card flex items-center gap-3">
+                        <div class="stat-icon-sm bg-violet-100 text-violet-600"><i class="fas fa-moon"></i></div>
+                        <div>
+                            <p class="text-[10px] text-slate-500 font-bold" data-i18n="timesheet.nightShift">Ca đêm</p>
+                            <p id="nightShiftCount" class="text-xl font-bold text-slate-800 dark:text-white">0</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Filters -->
+                <div class="glass-card mb-6">
+                    <div class="flex flex-wrap items-end gap-4">
+                        <div class="flex-1 min-w-[200px]">
+                            <label class="block text-xs font-bold text-slate-500 mb-1"
+                                data-i18n="timesheet.filterEmployee">Nhân viên</label>
+                            <div class="relative">
+                                <input type="hidden" id="filterEmployeeId">
+                                <div class="flex gap-2">
+                                    <input type="text" id="filterEmployee" class="input-premium w-full text-sm"
+                                        placeholder="Tìm nhân viên..." data-i18n-placeholder="timesheet.searchEmployee"
+                                        autocomplete="off">
+                                    <button type="button" id="clearFilterEmployeeBtn"
+                                        class="hidden px-3 py-2 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 border border-red-100"
+                                        onclick="clearFilterEmployee()"><i class="fas fa-times"></i></button>
+                                </div>
+                                <div id="filterEmployeeSearchResults"
+                                    class="hidden absolute z-10 w-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl max-h-48 overflow-y-auto">
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1"
+                                data-i18n="timesheet.startDate">Từ ngày</label>
+                            <input type="date" id="filterStartDate" class="input-premium text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="timesheet.endDate">Đến
+                                ngày</label>
+                            <input type="date" id="filterEndDate" class="input-premium text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1"
+                                data-i18n="timesheet.filterStatus">Trạng thái</label>
+                            <select id="filterStatus" class="input-premium text-sm">
+                                <option value="" data-i18n="common.all">Tất cả</option>
+                                <option value="0" data-i18n="timesheet.status0">Trống</option>
+                                <option value="1" data-i18n="timesheet.status1">Đi làm</option>
+                                <option value="2" data-i18n="timesheet.status2">Nghỉ</option>
+                                <option value="3" data-i18n="timesheet.status3">Xin nghỉ</option>
+                                <option value="4" data-i18n="timesheet.status4">Di chuyển</option>
+                                <option value="5" data-i18n="timesheet.status5">Làm visa</option>
+                                <option value="6" data-i18n="timesheet.status6">Đào tạo</option>
+                                <option value="7" data-i18n="timesheet.status7">Mở quyền hạn</option>
+                                <option value="night" data-i18n="timesheet.nightShift">Ca đêm</option>
+                            </select>
+                        </div>
+                        <button onclick="filterTimesheets()" class="btn-primary text-sm py-2"><i
+                                class="fas fa-filter"></i><span data-i18n="common.filter">Lọc</span></button>
+                        <button onclick="clearTimesheetFilter()" class="btn-premium text-sm py-2"><i
+                                class="fas fa-eraser"></i><span data-i18n="common.clear">Xóa lọc</span></button>
+                    </div>
+                </div>
+                <!-- Table -->
+                <div class="glass-card !p-0 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAllTimesheets"
+                                            onchange="toggleSelectAllTimesheets(this)"></th>
+                                    <th data-i18n="common.id">ID</th>
+                                    <th data-i18n="employee.name">Nhân viên</th>
+                                    <th data-i18n="timesheet.day">Ngày</th>
+                                    <th data-i18n="timesheet.workStart">Giờ vào</th>
+                                    <th data-i18n="timesheet.workEnd">Giờ ra</th>
+                                    <th data-i18n="user.status">Trạng thái</th>
+                                    <th data-i18n="timesheet.absenceType">Loại nghỉ</th>
+                                    <th data-i18n="employee.area">Khu vực</th>
+                                    <th data-i18n="timesheet.notes">Ghi chú</th>
+                                    <th data-i18n="common.action">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="timesheetTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div id="timesheetPagination" class="hidden"></div>
+                </div>
+            </div>
+
+            <!-- ===== AREA MANAGEMENT ===== -->
+            <div id="areaManagementSection" class="hidden fade-in p-4 md:p-8 min-h-full">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-800 dark:text-white" data-i18n="area.management">Quản
+                            lý Khu vực</h1>
+                        <p class="text-slate-500 text-sm mt-1" data-i18n="area.managementDesc">Quản lý các khu vực làm
+                            việc</p>
+                    </div>
+                    <button onclick="showCreateAreaModal()" class="btn-primary"><i class="fas fa-plus"></i><span
+                            data-i18n="area.add">Thêm Khu vực</span></button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+                    <div class="glass-card flex items-center gap-4">
+                        <div class="stat-icon bg-blue-100 dark:bg-blue-500/10 text-blue-600"><i
+                                class="fas fa-map-marker-alt"></i></div>
+                        <div>
+                            <p class="text-xs text-slate-500 font-semibold" data-i18n="area.total">Tổng khu vực</p>
+                            <p id="totalAreas" class="text-2xl font-bold text-slate-800 dark:text-white">0</p>
+                        </div>
+                    </div>
+                    <div class="glass-card flex items-center gap-4">
+                        <div class="stat-icon bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600"><i
+                                class="fas fa-check-circle"></i></div>
+                        <div>
+                            <p class="text-xs text-slate-500 font-semibold" data-i18n="area.active">Hoạt động</p>
+                            <p id="activeAreas" class="text-2xl font-bold text-slate-800 dark:text-white">0</p>
+                        </div>
+                    </div>
+                    <div class="glass-card flex items-center gap-4">
+                        <div class="stat-icon bg-slate-200 dark:bg-slate-700 text-slate-500"><i class="fas fa-ban"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 font-semibold" data-i18n="area.inactive">Không hoạt động
+                            </p>
+                            <p id="inactiveAreas" class="text-2xl font-bold text-slate-800 dark:text-white">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card !p-0 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th data-i18n="common.id">ID</th>
+                                    <th data-i18n="area.name">Tên khu vực</th>
+                                    <th data-i18n="area.description">Mô tả</th>
+                                    <th data-i18n="user.status">Trạng thái</th>
+                                    <th data-i18n="common.action">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="areaTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== PROJECT MANAGEMENT ===== -->
+            <div id="projectManagementSection" class="hidden fade-in p-4 md:p-8 min-h-full">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-800 dark:text-white" data-i18n="project.management">
+                            Quản lý Dự án</h1>
+                        <p class="text-slate-500 text-sm mt-1" data-i18n="project.managementDesc">Quản lý dự án và phân
+                            công nhân viên</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <input type="month" id="mainProjectMonthFilter" onchange="changeProjectMonth()"
+                            class="input-premium text-sm">
+                        <button onclick="showCreateProjectModal()" class="btn-primary"><i class="fas fa-plus"></i><span
+                                data-i18n="project.add">Thêm Dự án</span></button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+                    <div class="glass-card flex items-center gap-4">
+                        <div class="stat-icon bg-blue-100 dark:bg-blue-500/10 text-blue-600"><i
+                                class="fas fa-project-diagram"></i></div>
+                        <div>
+                            <p class="text-xs text-slate-500 font-semibold" data-i18n="project.total">Tổng dự án</p>
+                            <p id="totalProjects" class="text-2xl font-bold text-slate-800 dark:text-white">0</p>
+                        </div>
+                    </div>
+                    <div class="glass-card flex items-center gap-4">
+                        <div class="stat-icon bg-emerald-100 dark:bg-emerald-500/10 text-emerald-600"><i
+                                class="fas fa-user-friends"></i></div>
+                        <div>
+                            <p class="text-xs text-slate-500 font-semibold" data-i18n="project.totalEmployees">Tổng nhân
+                                viên (tháng)</p>
+                            <p id="totalProjectEmployees" class="text-2xl font-bold text-slate-800 dark:text-white">0
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card !p-0 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th data-i18n="common.id">ID</th>
+                                    <th data-i18n="project.name">Dự án</th>
+                                    <th data-i18n="project.description">Mô tả</th>
+                                    <th data-i18n="project.employeeCount">Số NV</th>
+                                    <th data-i18n="project.month">Tháng</th>
+                                    <th data-i18n="common.action">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="projectTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== FEEDBACK MANAGEMENT ===== -->
+            <div id="feedbackManagementSection" class="hidden fade-in p-4 md:p-8 min-h-full">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-800 dark:text-white" data-i18n="feedback.management">
+                            Quản lý Phản hồi</h1>
+                        <p class="text-slate-500 text-sm mt-1" data-i18n="feedback.managementDesc">Quản lý phản hồi từ
+                            nhân viên</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <input type="text" id="searchFeedback" oninput="displayFeedbacks(allFeedbacks)"
+                            class="input-premium text-sm w-48" placeholder="Tìm kiếm..."
+                            data-i18n-placeholder="common.search">
+                        <div id="feedbackBulkActions" class="hidden flex items-center gap-2">
+                            <span id="feedbackSelectedCount" class="text-sm font-bold text-slate-600"></span>
+                            <button onclick="deleteSelectedFeedbacks()" class="btn-premium text-red-500 text-sm"><i
+                                    class="fas fa-trash"></i><span data-i18n="common.deleteSelected">Xóa</span></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8">
+                    <div class="glass-card flex items-center gap-3">
+                        <div class="stat-icon-sm bg-blue-100 text-blue-600"><i class="fas fa-comments"></i></div>
+                        <div>
+                            <p class="text-[10px] text-slate-500 font-bold" data-i18n="feedback.total">Tổng</p>
+                            <p id="totalFeedbacks" class="text-xl font-bold text-slate-800 dark:text-white">0</p>
+                        </div>
+                    </div>
+                    <div class="glass-card flex items-center gap-3">
+                        <div class="stat-icon-sm bg-amber-100 text-amber-600"><i class="fas fa-clock"></i></div>
+                        <div>
+                            <p class="text-[10px] text-slate-500 font-bold" data-i18n="feedback.statusProcessing">Đang
+                                xử lí</p>
+                            <p id="processingCount" class="text-xl font-bold text-slate-800 dark:text-white">0</p>
+                        </div>
+                    </div>
+                    <div class="glass-card flex items-center gap-3">
+                        <div class="stat-icon-sm bg-rose-100 text-rose-600"><i class="fas fa-times-circle"></i></div>
+                        <div>
+                            <p class="text-[10px] text-slate-500 font-bold" data-i18n="feedback.closed">Đã đóng</p>
+                            <p id="closedCount" class="text-xl font-bold text-slate-800 dark:text-white">0</p>
+                        </div>
+                    </div>
+                    <div class="glass-card flex items-center gap-3">
+                        <div class="stat-icon-sm bg-emerald-100 text-emerald-600"><i class="fas fa-check-circle"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-slate-500 font-bold" data-i18n="feedback.completed">Hoàn thành
+                            </p>
+                            <p id="completedCount" class="text-xl font-bold text-slate-800 dark:text-white">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card !p-0 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAllFeedbacks"
+                                            onchange="toggleSelectAllFeedbacks(this)"></th>
+                                    <th data-i18n="common.id">ID</th>
+                                    <th data-i18n="employee.name">Nhân viên</th>
+                                    <th data-i18n="feedback.timesheet">Bảng công</th>
+                                    <th data-i18n="feedback.submittedAt">Ngày gửi</th>
+                                    <th data-i18n="user.status">Trạng thái</th>
+                                    <th data-i18n="feedback.responseStatus">TT phản hồi</th>
+                                    <th data-i18n="common.action">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="feedbackTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== EXCEL MANAGEMENT ===== -->
+            <div id="excelManagementSection" class="hidden fade-in p-4 md:p-8 min-h-full">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-800 dark:text-white" data-i18n="excel.management">
+                            Import/Export Excel</h1>
+                        <p class="text-slate-500 text-sm mt-1" data-i18n="excel.managementDesc">Nhập/xuất dữ liệu Excel
+                        </p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <!-- Import -->
+                    <div class="glass-card">
+                        <h2 class="text-lg font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2"><i
+                                class="fas fa-file-import text-blue-600"></i><span data-i18n="excel.import">Import
+                                Excel</span></h2>
+                        <form id="excelImportForm" class="space-y-4">
+                            <div class="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-6 text-center hover:border-blue-400 transition-colors cursor-pointer"
+                                onclick="document.getElementById('excelFileInput').click()">
+                                <i class="fas fa-cloud-upload-alt text-3xl text-slate-400 mb-2"></i>
+                                <p class="text-sm text-slate-500" data-i18n="excel.dropzone">Nhấp hoặc kéo file Excel
+                                    vào đây</p>
+                                <input type="file" id="excelFileInput" accept=".xlsx,.xls" class="hidden"
+                                    onchange="handleFileSelect(event)">
+                            </div>
+                            <div id="selectedFileName"
+                                class="hidden flex items-center justify-between bg-blue-50 dark:bg-blue-500/10 px-4 py-2 rounded-lg">
+                                <span class="text-sm text-blue-600 font-medium"><i
+                                        class="fas fa-file-excel mr-2"></i><span id="fileNameText"></span></span>
+                                <button type="button" onclick="clearFileInput()"
+                                    class="text-red-400 hover:text-red-600"><i class="fas fa-times"></i></button>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox"
+                                        id="importEmployees" checked class="w-4 h-4 text-blue-600 rounded"><span
+                                        class="text-sm text-slate-600" data-i18n="excel.employees">Nhân
+                                        viên</span></label>
+                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox"
+                                        id="importTimesheets" checked class="w-4 h-4 text-blue-600 rounded"><span
+                                        class="text-sm text-slate-600" data-i18n="excel.timesheets">Bảng
+                                        công</span></label>
+                            </div>
+                            <button type="submit" class="btn-primary w-full"><i class="fas fa-upload"></i><span
+                                    data-i18n="excel.importBtn">Import</span></button>
+                        </form>
+                        <div id="importResult" class="hidden mt-4"></div>
+                    </div>
+                    <!-- Export -->
+                    <div class="glass-card">
+                        <h2 class="text-lg font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2"><i
+                                class="fas fa-file-export text-emerald-600"></i><span data-i18n="excel.export">Export
+                                Excel</span></h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 mb-1"
+                                    data-i18n="excel.dateRange">Khoảng ngày</label>
+                                <div class="flex gap-2">
+                                    <input type="date" id="exportStartDate" class="input-premium text-sm flex-1">
+                                    <span class="text-slate-400 self-center">→</span>
+                                    <input type="date" id="exportEndDate" class="input-premium text-sm flex-1">
+                                </div>
+                            </div>
+                            <div class="flex gap-3">
+                                <div class="flex-1">
+                                    <label class="block text-xs font-bold text-slate-500 mb-1"
+                                        data-i18n="excel.year">Năm</label>
+                                    <select id="exportYear" class="input-premium text-sm w-full"></select>
+                                </div>
+                                <div class="flex-1">
+                                    <label class="block text-xs font-bold text-slate-500 mb-1"
+                                        data-i18n="excel.month">Tháng</label>
+                                    <select id="exportMonth" class="input-premium text-sm w-full">
+                                        <option value="" data-i18n="common.all">Tất cả</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                        <option value="11">11</option>
+                                        <option value="12">12</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button onclick="exportExcel()"
+                                class="btn-primary w-full bg-emerald-600 hover:bg-emerald-700"><i
+                                    class="fas fa-download"></i><span data-i18n="excel.exportBtn">Export</span></button>
+                        </div>
+                    </div>
+                </div>
+                <!-- History -->
+                <div class="glass-card !p-0 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+                        <h2 class="text-lg font-bold text-slate-800 dark:text-white" data-i18n="excel.history">Lịch sử
+                            Import</h2>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th data-i18n="common.id">ID</th>
+                                    <th data-i18n="excel.fileName">Tên file</th>
+                                    <th data-i18n="excel.uploadTime">Thời gian</th>
+                                    <th data-i18n="common.action">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="excelHistoryTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- end main content -->
+    </div><!-- end mainPage -->
+
+    <!-- ==================== MODALS ==================== -->
+
+    <!-- User Modal -->
+    <div id="userModal"
+        class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in">
+        <div
+            class="glass-card w-full max-w-lg shadow-2xl animate-scale-in !p-0 overflow-hidden border-t-4 border-t-blue-600">
+            <div
+                class="px-8 py-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
+                <h2 id="modalTitle" class="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-3">
+                    <div class="stat-icon bg-blue-100 dark:bg-blue-500/10 text-blue-600"
+                        style="width:2.5rem;height:2.5rem;border-radius:0.75rem"><i
+                            class="fas fa-user-plus text-sm"></i></div>
+                    <span data-i18n="user.add">Thêm Tài khoản</span>
+                </h2>
+                <button onclick="closeUserModal()"
+                    class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all"><i
+                        class="fas fa-times text-lg"></i></button>
+            </div>
+            <form id="userForm" class="p-8 space-y-5">
+                <input type="hidden" id="userId" value="">
+                <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                        data-i18n="user.username">Tên đăng nhập</label><input type="text" id="modalUsername"
+                        class="input-premium w-full" placeholder="Nhập tên đăng nhập" required></div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                        data-i18n="user.password">Mật khẩu</label>
+                    <div class="relative">
+                        <input type="password" id="modalPassword" class="input-premium w-full pr-10"
+                            placeholder="Nhập mật khẩu">
+                        <button type="button"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-blue-500 focus:outline-none"
+                            onclick="togglePasswordVisibility('modalPassword', this)">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                        data-i18n="user.status">Trạng thái</label><select id="modalActive" class="input-premium w-full">
+                        <option value="1" data-i18n="user.activeStatus">Hoạt động</option>
+                        <option value="0" data-i18n="user.inactiveStatus">Không hoạt động</option>
+                    </select></div>
+                <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                        data-i18n="user.role">Vai trò</label><select id="modalRole" class="input-premium w-full">
+                        <option value="1" data-i18n="user.roleAdmin">Quản trị viên</option>
+                        <option value="2" data-i18n="user.roleUser">Người dùng</option>
+                    </select></div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                        data-i18n="user.employee">Nhân viên liên kết</label>
+                    <div class="relative">
+                        <input type="hidden" id="userEmployeeId" value="">
+                        <div class="flex gap-2">
+                            <input type="text" id="userEmployeeSearch" class="input-premium w-full"
+                                placeholder="Tìm kiếm nhân viên..." data-i18n-placeholder="timesheet.searchEmployee"
+                                autocomplete="off">
+                            <button type="button" id="clearUserEmployeeBtn"
+                                class="hidden px-3 py-2 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 border border-red-100"
+                                onclick="clearUserEmployeeSelection()"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div id="userEmployeeSearchResults"
+                            class="hidden absolute z-10 w-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl max-h-48 overflow-y-auto">
+                        </div>
+                    </div>
+                </div>
+                <div id="modalError"
+                    class="hidden bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg text-sm"><i
+                        class="fas fa-exclamation-circle mr-2"></i><span id="modalErrorText"></span></div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="closeUserModal()" class="btn-premium flex-1"
+                        data-i18n="common.cancel">Hủy</button>
+                    <button type="submit" class="btn-primary flex-1"><i class="fas fa-save"></i><span
+                            data-i18n="common.save">Lưu</span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Timesheet Modal -->
+    <div id="timesheetModal"
+        class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in">
+        <div
+            class="glass-card w-full max-w-2xl shadow-2xl animate-scale-in !p-0 overflow-hidden border-t-4 border-t-blue-600 max-h-[90vh] overflow-y-auto">
+            <div
+                class="px-8 py-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50 sticky top-0 z-10">
+                <h2 id="timesheetModalTitle" class="text-xl font-bold text-slate-800 dark:text-white"
+                    data-i18n="timesheet.add">Thêm Bảng công</h2>
+                <button onclick="closeTimesheetModal()"
+                    class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all"><i
+                        class="fas fa-times text-lg"></i></button>
+            </div>
+            <form id="timesheetForm" class="p-8 space-y-5">
+                <input type="hidden" id="timesheetId" value="">
+                <div id="employeeSelectContainer">
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                        data-i18n="employee.name">Nhân viên</label>
+                    <div class="relative">
+                        <input type="hidden" id="modalEmployeeId" value="">
+                        <input type="text" id="modalEmployeeSearch" class="input-premium w-full"
+                            placeholder="Tìm nhân viên..." data-i18n-placeholder="timesheet.searchEmployee"
+                            autocomplete="off">
+                        <div id="employeeSearchResults"
+                            class="hidden absolute z-10 w-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl max-h-48 overflow-y-auto">
+                        </div>
+                    </div>
+                </div>
+                <div id="employeeDisplayContainer" class="hidden">
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                        data-i18n="employee.name">Nhân viên</label>
+                    <div id="modalEmployeeDisplay"
+                        class="input-premium w-full bg-slate-100 dark:bg-slate-700 cursor-not-allowed"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                            data-i18n="timesheet.day">Ngày</label><input type="date" id="modalDay"
+                            class="input-premium w-full" required></div>
+                    <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                            data-i18n="timesheet.workStart">Giờ vào</label><input type="text" placeholder="HH:mm"
+                            id="modalWorkStart" class="time-picker input-premium w-full text-center"></div>
+                    <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                            data-i18n="timesheet.workEnd">Giờ ra</label><input type="text" placeholder="HH:mm"
+                            id="modalWorkEnd" class="time-picker input-premium w-full text-center"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                            data-i18n="user.status">Trạng thái</label>
+                        <select id="modalStatus" class="input-premium w-full" onchange="toggleAbsenceFields()">
+                            <option value="0" data-i18n="timesheet.status0">Trống</option>
+                            <option value="1" data-i18n="timesheet.status1">Đi làm</option>
+                            <option value="2" data-i18n="timesheet.status2">Nghỉ</option>
+                            <option value="3" data-i18n="timesheet.status3">Xin nghỉ</option>
+                            <option value="4" data-i18n="timesheet.status4">Di chuyển</option>
+                            <option value="5" data-i18n="timesheet.status5">Làm visa</option>
+                            <option value="6" data-i18n="timesheet.status6">Đào tạo</option>
+                            <option value="7" data-i18n="timesheet.status7">Mở quyền hạn</option>
+                        </select>
+                    </div>
+                    <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                            data-i18n="employee.area">Khu vực</label><select id="modalTimesheetAreaId"
+                            class="input-premium w-full">
+                            <option value="">-- Chọn khu vực --</option>
+                        </select></div>
+                </div>
+                <div id="absenceFields" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                            data-i18n="timesheet.absenceType">Loại nghỉ</label><select id="modalAbsenceType"
+                            class="input-premium w-full">
+                            <option value="">-- Chọn --</option>
+                            <option value="0" data-i18n="timesheet.absencePersonal">Lý do cá nhân</option>
+                            <option value="1" data-i18n="timesheet.absenceNonPersonal">Không phải lý do cá nhân</option>
+                        </select></div>
+                    <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                            data-i18n="timesheet.absenceReason">Lý do nghỉ</label><input type="text"
+                            id="modalAbsenceReason" class="input-premium w-full" placeholder="Nhập lý do..."></div>
+                </div>
+                <div id="notesContainer"><label
+                        class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                        data-i18n="timesheet.notes">Ghi chú</label><textarea id="modalNotes"
+                        class="input-premium w-full" rows="2" placeholder="Ghi chú..."></textarea></div>
+                <div id="timesheetModalError"
+                    class="hidden bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg text-sm"><i
+                        class="fas fa-exclamation-circle mr-2"></i><span id="timesheetModalErrorText"></span></div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="closeTimesheetModal()" class="btn-premium flex-1"
+                        data-i18n="common.cancel">Hủy</button>
+                    <button type="submit" class="btn-primary flex-1"><i class="fas fa-save"></i><span
+                            data-i18n="common.save">Lưu</span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Employee Modal -->
+    <div id="employeeModal"
+        class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in">
+        <div
+            class="glass-card w-full max-w-2xl shadow-2xl animate-scale-in !p-0 overflow-hidden border-t-4 border-t-blue-600 max-h-[90vh] overflow-y-auto">
+            <div
+                class="px-8 py-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50 sticky top-0 z-10">
+                <h2 id="employeeModalTitle" class="text-xl font-bold text-slate-800 dark:text-white"
+                    data-i18n="employee.add">Thêm Nhân viên</h2>
+                <button onclick="closeEmployeeModal()"
+                    class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all"><i
+                        class="fas fa-times text-lg"></i></button>
+            </div>
+            <form id="employeeForm" class="p-8 space-y-5">
+                <input type="hidden" id="employeeId" value="">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                            data-i18n="employee.fullname">Họ tên</label><input type="text" id="modalFullname"
+                            class="input-premium w-full" required></div>
+                    <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                            data-i18n="employee.fullnameOther">Tên khác</label><input type="text"
+                            id="modalFullnameOther" class="input-premium w-full"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                            data-i18n="employee.type">Loại</label><select id="modalType" class="input-premium w-full">
+                            <option value="VN">VN</option>
+                            <option value="TQ">TQ</option>
+                        </select></div>
+                    <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                            data-i18n="employee.sale">Sale</label><input type="text" id="modalSale"
+                            class="input-premium w-full"></div>
+                    <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                            data-i18n="employee.plantName">Nhà máy</label><input type="text" id="modalPlantName"
+                            class="input-premium w-full"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                            data-i18n="employee.skillLv">Cấp kỹ năng</label><input type="text" id="modalSkillLv"
+                            class="input-premium w-full"></div>
+                    <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                            data-i18n="employee.skillNote">Ghi chú kỹ năng</label><input type="text" id="modalSkillNote"
+                            class="input-premium w-full"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                            data-i18n="employee.timeTest">Thời gian test</label><input type="text" id="modalTimeTest"
+                            class="input-premium w-full"></div>
+                    <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                            data-i18n="employee.travelDays">Ngày di chuyển</label><input type="number"
+                            id="modalTravelDays" class="input-premium w-full" value="0"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                            data-i18n="employee.visaExtension">Gia hạn visa</label><input type="text"
+                            id="modalVisaExtension" class="input-premium w-full"></div>
+                    <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                            data-i18n="employee.permissionGranted">Mở quyền hạn</label><input type="text"
+                            id="modalPermissionGranted" class="input-premium w-full"></div>
+                    <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                            data-i18n="employee.trainingDays">Ngày đào tạo</label><input type="number"
+                            id="modalTrainingDays" class="input-premium w-full" value="0"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                            data-i18n="employee.area">Khu vực</label><select id="modalAreaId"
+                            class="input-premium w-full">
+                            <option value="">-- Chọn --</option>
+                        </select></div>
+                    <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                            data-i18n="employee.projectMonth">Tháng dự án</label><input type="month"
+                            id="modalProjectMonth" class="input-premium w-full"></div>
+                    <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                            data-i18n="user.status">Trạng thái</label><select id="modalEmployeeActive"
+                            class="input-premium w-full">
+                            <option value="1" data-i18n="user.activeStatus">Hoạt động</option>
+                            <option value="0" data-i18n="user.inactiveStatus">Không hoạt động</option>
+                        </select></div>
+                </div>
+                <div id="employeeModalError"
+                    class="hidden bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg text-sm"><i
+                        class="fas fa-exclamation-circle mr-2"></i><span id="employeeModalErrorText"></span></div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="closeEmployeeModal()" class="btn-premium flex-1"
+                        data-i18n="common.cancel">Hủy</button>
+                    <button type="submit" class="btn-primary flex-1"><i class="fas fa-save"></i><span
+                            data-i18n="common.save">Lưu</span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Employee Detail Modal -->
+    <div id="employeeDetailModal"
+        class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in">
+        <div
+            class="glass-card w-full max-w-4xl shadow-2xl animate-scale-in !p-0 overflow-hidden border-t-4 border-t-indigo-600 max-h-[90vh] overflow-y-auto">
+            <div
+                class="px-8 py-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50 sticky top-0 z-10">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800 dark:text-white" data-i18n="employee.detail">Chi tiết
+                        Nhân viên</h2>
+                    <p id="detailFullname" class="text-sm text-slate-500 mt-1"></p>
+                </div>
+                <button onclick="closeEmployeeDetailModal()"
+                    class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50"><i
+                        class="fas fa-times text-lg"></i></button>
+            </div>
+            <div class="p-8">
+                <!-- Info Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-3">
+                        <p class="text-[10px] text-slate-500 font-bold" data-i18n="employee.fullnameOther">Tên khác</p>
+                        <p id="detailFullnameOther" class="text-sm font-semibold text-slate-800 dark:text-white mt-1">-
+                        </p>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-3">
+                        <p class="text-[10px] text-slate-500 font-bold" data-i18n="employee.type">Loại</p>
+                        <p id="detailType" class="text-sm font-semibold text-slate-800 dark:text-white mt-1">-</p>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-3">
+                        <p class="text-[10px] text-slate-500 font-bold" data-i18n="employee.plantName">Nhà máy</p>
+                        <p id="detailPlantName" class="text-sm font-semibold text-slate-800 dark:text-white mt-1">-</p>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-3">
+                        <p class="text-[10px] text-slate-500 font-bold" data-i18n="employee.sale">Sale</p>
+                        <p id="detailSale" class="text-sm font-semibold text-slate-800 dark:text-white mt-1">-</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-3">
+                        <p class="text-[10px] text-slate-500 font-bold" data-i18n="employee.project">Dự án</p>
+                        <p id="detailProjectCodes" class="text-sm font-semibold text-slate-800 dark:text-white mt-1">-
+                        </p>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-3">
+                        <p class="text-[10px] text-slate-500 font-bold" data-i18n="employee.workTime">Thời gian</p>
+                        <p id="detailWorkTime" class="text-sm font-semibold text-slate-800 dark:text-white mt-1">-</p>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-3">
+                        <p class="text-[10px] text-slate-500 font-bold" data-i18n="employee.projectMonth">Tháng DA</p>
+                        <p id="detailProjectMonth" class="text-sm font-semibold text-slate-800 dark:text-white mt-1">-
+                        </p>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-3">
+                        <p class="text-[10px] text-slate-500 font-bold" data-i18n="employee.skillLv">Cấp KN</p>
+                        <p id="detailSkillLv" class="text-sm font-semibold text-slate-800 dark:text-white mt-1">-</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-3">
+                        <p class="text-[10px] text-slate-500 font-bold" data-i18n="employee.skillNote">Ghi chú KN</p>
+                        <p id="detailSkillNote" class="text-sm font-semibold text-slate-800 dark:text-white mt-1">-</p>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-3">
+                        <p class="text-[10px] text-slate-500 font-bold" data-i18n="employee.timeTest">Test</p>
+                        <p id="detailTimeTest" class="text-sm font-semibold text-slate-800 dark:text-white mt-1">-</p>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-3">
+                        <p class="text-[10px] text-slate-500 font-bold" data-i18n="employee.visaExtension">Visa</p>
+                        <p id="detailVisaExtension" class="text-sm font-semibold text-slate-800 dark:text-white mt-1">-
+                        </p>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-3">
+                        <p class="text-[10px] text-slate-500 font-bold" data-i18n="employee.permissionGranted">Quyền hạn
+                        </p>
+                        <p id="detailPermissionGranted"
+                            class="text-sm font-semibold text-slate-800 dark:text-white mt-1">-</p>
+                    </div>
+                </div>
+                <!-- Attendance Stats -->
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
+                    <div class="bg-emerald-50 dark:bg-emerald-500/10 rounded-xl p-3 text-center">
+                        <p class="text-[10px] text-emerald-600 font-bold" data-i18n="employee.workDays">Ngày làm</p>
+                        <p id="detailWorkDays" class="text-lg font-bold text-emerald-700">0</p>
+                    </div>
+                    <div class="bg-sky-50 dark:bg-sky-500/10 rounded-xl p-3 text-center">
+                        <p class="text-[10px] text-sky-600 font-bold" data-i18n="employee.travelDays">Di chuyển</p>
+                        <p id="detailTravelDays" class="text-lg font-bold text-sky-700">0</p>
+                    </div>
+                    <div class="bg-amber-50 dark:bg-amber-500/10 rounded-xl p-3 text-center">
+                        <p class="text-[10px] text-amber-600 font-bold" data-i18n="employee.leaveDays">Nghỉ phép</p>
+                        <p id="detailLeaveDays" class="text-lg font-bold text-amber-700">0</p>
+                    </div>
+                    <div class="bg-rose-50 dark:bg-rose-500/10 rounded-xl p-3 text-center">
+                        <p class="text-[10px] text-rose-600 font-bold" data-i18n="employee.unauthorizedLeave">Nghỉ KP
+                        </p>
+                        <p id="detailUnauthorizedLeave" class="text-lg font-bold text-rose-700">0</p>
+                    </div>
+                    <div class="bg-indigo-50 dark:bg-indigo-500/10 rounded-xl p-3 text-center">
+                        <p class="text-[10px] text-indigo-600 font-bold" data-i18n="employee.nightShiftDays">Ca đêm</p>
+                        <p id="detailNightShiftDays" class="text-lg font-bold text-indigo-700">0</p>
+                    </div>
+                    <div class="bg-blue-50 dark:bg-blue-500/10 rounded-xl p-3 text-center">
+                        <p class="text-[10px] text-blue-600 font-bold" data-i18n="common.total">Tổng</p>
+                        <p id="detailTotalDays" class="text-lg font-bold text-blue-700">0</p>
+                    </div>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-3 mb-6">
+                    <p class="text-[10px] text-slate-500 font-bold" data-i18n="employee.trainingDays">Ngày đào tạo</p>
+                    <p id="detailTrainingDays" class="text-sm font-semibold text-slate-800 dark:text-white mt-1">0</p>
+                </div>
+                <!-- Date Filter -->
+                <div class="flex flex-wrap items-center gap-3 mb-4 bg-slate-50 dark:bg-slate-800 rounded-xl p-3">
+                    <span class="text-sm font-semibold text-slate-600" data-i18n="employee.dateFilter">Lọc ngày:</span>
+                    <input type="date" id="detailFilterStartDate" class="input-premium text-sm w-auto">
+                    <span class="text-slate-400">→</span>
+                    <input type="date" id="detailFilterEndDate" class="input-premium text-sm w-auto">
+                    <button onclick="applyDetailDateFilter()" class="btn-primary text-sm py-1.5"><i
+                            class="fas fa-filter"></i></button>
+                    <button onclick="clearDetailDateFilter()" class="btn-premium text-sm py-1.5"><i
+                            class="fas fa-eraser"></i></button>
+                </div>
+                <!-- Assignment Info -->
+                <div id="detailAssignmentInfo" class="mb-4"></div>
+                <!-- Project Table -->
+                <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-i18n="project.name">Dự án</th>
+                                <th data-i18n="project.code">Mã</th>
+                                <th data-i18n="employee.projectMonth">Tháng</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detailProjectTableBody"></tbody>
+                    </table>
+                    <div id="detailProjectEmpty" class="hidden text-center py-6 text-slate-500 text-sm"
+                        data-i18n="employee.noProjects">Chưa có dự án</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Area Modal -->
+    <div id="areaModal"
+        class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in">
+        <div
+            class="glass-card w-full max-w-lg shadow-2xl animate-scale-in !p-0 overflow-hidden border-t-4 border-t-blue-600">
+            <div
+                class="px-8 py-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
+                <h2 id="areaModalTitle" class="text-xl font-bold text-slate-800 dark:text-white" data-i18n="area.add">
+                    Thêm Khu vực</h2>
+                <button onclick="closeAreaModal()"
+                    class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50"><i
+                        class="fas fa-times text-lg"></i></button>
+            </div>
+            <form id="areaForm" class="p-8 space-y-5">
+                <input type="hidden" id="areaId" value="">
+                <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                        data-i18n="area.name">Tên khu vực</label><input type="text" id="modalAreaName"
+                        class="input-premium w-full" required></div>
+                <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                        data-i18n="area.description">Mô tả</label><textarea id="modalAreaDescription"
+                        class="input-premium w-full" rows="3"></textarea></div>
+                <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                        data-i18n="user.status">Trạng thái</label><select id="modalAreaActive"
+                        class="input-premium w-full">
+                        <option value="1" data-i18n="user.activeStatus">Hoạt động</option>
+                        <option value="0" data-i18n="user.inactiveStatus">Không hoạt động</option>
+                    </select></div>
+                <div id="areaModalError"
+                    class="hidden bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg text-sm"><i
+                        class="fas fa-exclamation-circle mr-2"></i><span id="areaModalErrorText"></span></div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="closeAreaModal()" class="btn-premium flex-1"
+                        data-i18n="common.cancel">Hủy</button>
+                    <button type="submit" class="btn-primary flex-1"><i class="fas fa-save"></i><span
+                            data-i18n="common.save">Lưu</span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Project Modal -->
+    <div id="projectModal"
+        class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in">
+        <div
+            class="glass-card w-full max-w-lg shadow-2xl animate-scale-in !p-0 overflow-hidden border-t-4 border-t-blue-600">
+            <div
+                class="px-8 py-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
+                <h2 id="projectModalTitle" class="text-xl font-bold text-slate-800 dark:text-white"
+                    data-i18n="project.add">Thêm Dự án</h2>
+                <button onclick="closeProjectModal()"
+                    class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50"><i
+                        class="fas fa-times text-lg"></i></button>
+            </div>
+            <form id="projectForm" class="p-8 space-y-5">
+                <input type="hidden" id="projectId" value="">
+                <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                        data-i18n="project.name">Tên dự án</label><input type="text" id="modalProjectName"
+                        class="input-premium w-full" required></div>
+                <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                        data-i18n="project.code">Mã dự án</label><input type="text" id="modalProjectCode"
+                        class="input-premium w-full" required></div>
+                <div><label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                        data-i18n="project.description">Mô tả</label><textarea id="modalProjectDescription"
+                        class="input-premium w-full" rows="3"></textarea></div>
+                <div id="projectModalError"
+                    class="hidden bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg text-sm"><i
+                        class="fas fa-exclamation-circle mr-2"></i><span id="projectModalErrorText"></span></div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="closeProjectModal()" class="btn-premium flex-1"
+                        data-i18n="common.cancel">Hủy</button>
+                    <button type="submit" class="btn-primary flex-1"><i class="fas fa-save"></i><span
+                            data-i18n="common.save">Lưu</span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Project Month Detail Modal -->
+    <div id="projectMonthDetailModal"
+        class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in">
+        <div
+            class="glass-card w-full max-w-3xl shadow-2xl animate-scale-in !p-0 overflow-hidden border-t-4 border-t-indigo-600 max-h-[90vh] overflow-y-auto">
+            <div
+                class="px-8 py-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50 sticky top-0 z-10">
+                <div>
+                    <h2 id="projectMonthDetailTitle" class="text-xl font-bold text-slate-800 dark:text-white"
+                        data-i18n="project.monthDetail">Chi tiết tháng</h2>
+                    <p id="projectMonthDetailSubtitle" class="text-sm text-slate-500 mt-1"></p>
+                </div>
+                <button onclick="closeProjectMonthDetailModal()"
+                    class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50"><i
+                        class="fas fa-times text-lg"></i></button>
+            </div>
+            <div class="p-8">
+                <div class="flex flex-wrap items-center gap-3 mb-4">
+                    <input type="month" id="modalProjectMonthFilter" onchange="changeProjectDetailMonth()"
+                        class="input-premium text-sm">
+                    <span id="pmDetailEmployeeCount" class="text-sm font-bold text-slate-600"></span>
+                </div>
+                <!-- Add Employee -->
+                <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 mb-4">
+                    <div class="flex gap-2">
+                        <div class="relative flex-1">
+                            <input type="hidden" id="pmDetailEmployeeId">
+                            <input type="text" id="pmDetailEmployeeSearch" class="input-premium w-full text-sm"
+                                placeholder="Tìm nhân viên..." data-i18n-placeholder="timesheet.searchEmployee"
+                                autocomplete="off">
+                            <div id="pmDetailEmployeeResults"
+                                class="hidden absolute z-10 w-full mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl max-h-48 overflow-y-auto">
+                            </div>
+                        </div>
+                        <button onclick="addEmployeeToProjectMonth()" class="btn-primary text-sm"><i
+                                class="fas fa-plus"></i><span data-i18n="common.add">Thêm</span></button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-i18n="common.id">ID</th>
+                                <th data-i18n="employee.name">Nhân viên</th>
+                                <th data-i18n="employee.type">Quốc tịch</th>
+                                <th data-i18n="employee.area">Khu vực</th>
+                                <th data-i18n="common.action">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pmDetailTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Project Employees Modal -->
+    <div id="projectEmployeesModal"
+        class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in">
+        <div
+            class="glass-card w-full max-w-2xl shadow-2xl animate-scale-in !p-0 overflow-hidden border-t-4 border-t-blue-600 max-h-[90vh] overflow-y-auto">
+            <div
+                class="px-8 py-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50 sticky top-0 z-10">
+                <h2 id="projectEmployeesModalTitle" class="text-xl font-bold text-slate-800 dark:text-white"
+                    data-i18n="project.employeesInMonth">Nhân viên Dự án</h2>
+                <button onclick="closeProjectEmployeesModal()"
+                    class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50"><i
+                        class="fas fa-times text-lg"></i></button>
+            </div>
+            <div class="p-8">
+                <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-i18n="common.id">ID</th>
+                                <th data-i18n="employee.name">Nhân viên</th>
+                                <th data-i18n="employee.nationality">Quốc tịch</th>
+                                <th data-i18n="employee.area">Khu vực</th>
+                                <th data-i18n="common.action">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="projectEmployeesTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Employee Status Modal (Feedback) -->
+    <div id="updateEmployeeStatusModal"
+        class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-fade-in">
+        <div
+            class="glass-card w-full max-w-md shadow-2xl animate-scale-in !p-0 overflow-hidden border-t-4 border-t-blue-600">
+            <div
+                class="px-8 py-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-900/50">
+                <h2 class="text-xl font-bold text-slate-800 dark:text-white" data-i18n="feedback.updateStatus">Cập nhật
+                    trạng thái</h2>
+                <button onclick="closeUpdateEmployeeStatusModal()"
+                    class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50"><i
+                        class="fas fa-times text-lg"></i></button>
+            </div>
+            <form id="updateEmployeeStatusForm" class="p-8 space-y-5">
+                <input type="hidden" id="updateEmployeeStatusId" value="">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2"
+                        data-i18n="feedback.responseStatus">Trạng thái phản hồi</label>
+                    <select id="updateEmployeeStatusSelect" class="input-premium w-full">
+                        <option value="1" data-i18n="feedback.statusCorrect">Đúng</option>
+                        <option value="2" data-i18n="feedback.statusWrong">Sai</option>
+                        <option value="3" data-i18n="feedback.statusProcessing">Đang xử lí</option>
+                    </select>
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="closeUpdateEmployeeStatusModal()" class="btn-premium flex-1"
+                        data-i18n="common.cancel">Hủy</button>
+                    <button type="submit" class="btn-primary flex-1"><i class="fas fa-save"></i><span
+                            data-i18n="common.save">Lưu</span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirm Dialog -->
+    <div id="confirmDialog"
+        class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-[60] p-4 animate-fade-in">
+        <div class="glass-card w-full max-w-md shadow-2xl animate-scale-in text-center">
+            <div id="confirmDialogIcon"
+                class="w-16 h-16 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-exclamation-triangle text-2xl"></i></div>
+            <h3 id="confirmDialogTitle" class="text-xl font-bold text-slate-800 dark:text-white mb-2"
+                data-i18n="common.confirm">Xác nhận</h3>
+            <p id="confirmDialogMessage" class="text-slate-500 mb-6" data-i18n="message.confirmDelete">Bạn có chắc chắn?
+            </p>
+            <div class="flex gap-3">
+                <button id="confirmDialogCancel" class="btn-premium flex-1" data-i18n="common.cancel">Hủy</button>
+                <button id="confirmDialogOk" class="btn-primary flex-1 bg-red-600 hover:bg-red-700"
+                    data-i18n="common.confirm">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed top-4 right-4 z-[70] space-y-2"></div>
+
+    <!-- AI Chat Widget -->
+    <div id="aiChatWidget" class="fixed bottom-6 right-6 z-50">
+        <button onclick="toggleAiChat()"
+            class="w-14 h-14 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-full shadow-lg flex items-center justify-center text-white hover:scale-110 transition-transform">
+            <i class="fas fa-robot text-xl"></i>
+        </button>
+    </div>
+    <div id="aiChatWindow"
+        class="hidden fixed bottom-24 right-6 w-96 max-h-[500px] z-50 glass-card !p-0 overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col animate-scale-in">
+        <div
+            class="px-5 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white flex justify-between items-center">
+            <div class="flex items-center gap-2"><i class="fas fa-robot"></i><span class="font-bold text-sm">AI
+                    Assistant</span></div>
+            <button onclick="toggleAiChat()" class="text-white/80 hover:text-white"><i
+                    class="fas fa-times"></i></button>
+        </div>
+        <div id="aiChatMessages"
+            class="flex-1 overflow-y-auto p-4 space-y-3 min-h-[300px] bg-slate-50 dark:bg-slate-900"></div>
+        <div class="p-3 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+            <div class="flex gap-2">
+                <input type="text" id="aiChatInput" class="input-premium flex-1 text-sm" placeholder="Hỏi AI..."
+                    data-i18n-placeholder="ai.placeholder" onkeypress="if(event.key==='Enter')sendAiMessage()">
+                <button onclick="sendAiMessage()" class="btn-primary px-4"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="app.js?v=3"></script>
+    <script src="dashboard.js?v=3"></script>
+    <script src="employee.js?v=3"></script>
+    <script src="timesheet.js?v=3"></script>
+    <script src="area.js?v=3"></script>
+    <script src="project.js?v=3"></script>
+    <script src="feedback.js?v=3"></script>
+    <script src="excel.js?v=3"></script>
+    <script src="daily.js?v=3"></script>
+    <script src="ai-chat.js?v=3"></script>
+</body>
+
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảng công nhân viên</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="translation.js"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div class="max-w-6xl mx-auto py-8 px-4">
+        <header class="mb-6 sm:mb-8 flex flex-row items-center justify-between gap-2 sm:gap-4">
+            <div class="flex-1 min-w-0">
+                <h1 class="text-lg sm:text-2xl md:text-3xl font-bold text-slate-800 mb-0 sm:mb-2 flex items-center space-x-2">
+                    <i class="fas fa-clipboard-check text-blue-600 text-base sm:text-xl md:text-2xl"></i>
+                    <span data-i18n="ets.title" class="truncate">Bảng công nhân viên</span>
+                </h1>
+                <p class="text-slate-600 text-xs sm:text-sm hidden sm:block" data-i18n="ets.subtitle">Xem và xác nhận đúng / sai cho từng bảng công. Sai thì nhập lý do gửi về phản hồi.</p>
+            </div>
+            <!-- Profile Dropdown -->
+            <div class="relative flex-shrink-0" id="profileDropdownContainer">
+                <button type="button" onclick="etsToggleProfileDropdown()" id="profileButton"
+                    class="flex items-center space-x-1.5 sm:space-x-2 md:space-x-3 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-white border-2 border-slate-200 hover:border-blue-500 shadow-md hover:shadow-lg transition-all">
+                    <div class="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold text-xs sm:text-sm flex-shrink-0" id="profileAvatar">
+                        <span class="text-xs sm:text-sm md:text-base" id="profileAvatarText"></span>
+                    </div>
+                    <div class="text-left">
+                        <p class="text-[11px] sm:text-xs md:text-sm font-semibold text-slate-800 truncate max-w-[50px] sm:max-w-[100px] md:max-w-none" id="profileName">Người dùng</p>
+                        <p class="text-[9px] sm:text-[10px] md:text-xs text-slate-500 hidden sm:block" id="profileRole">Nhân viên</p>
+                    </div>
+                    <i class="fas fa-chevron-down text-slate-400 text-[9px] sm:text-[10px] md:text-xs flex-shrink-0 hidden sm:block" id="profileChevron"></i>
+                </button>
+                <!-- Dropdown Menu -->
+                <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-56 sm:w-64 bg-white rounded-xl shadow-2xl overflow-hidden z-50">
+                    <div class="py-2">
+                        <button type="button" onclick="etsOpenEditProfileModal()" 
+                            class="w-full px-4 py-3 text-left hover:bg-slate-50 transition-colors flex items-center space-x-3 text-slate-700">
+                            <i class="fas fa-user-edit text-blue-600 w-5"></i>
+                            <span class="text-sm font-medium" data-i18n="profile.editInfo">Đổi thông tin</span>
+                        </button>
+                        <button type="button" onclick="etsOpenChangePasswordModal()" 
+                            class="w-full px-4 py-3 text-left hover:bg-slate-50 transition-colors flex items-center space-x-3 text-slate-700">
+                            <i class="fas fa-key text-orange-600 w-5"></i>
+                            <span class="text-sm font-medium" data-i18n="profile.changePassword">Đổi mật khẩu</span>
+                        </button>
+                        <div class="border-t border-slate-200 my-1"></div>
+                        <button type="button" onclick="etsLogout()" 
+                            class="w-full px-4 py-3 text-left hover:bg-red-50 transition-colors flex items-center space-x-3 text-red-600">
+                            <i class="fas fa-sign-out-alt w-5"></i>
+                            <span class="text-sm font-medium" data-i18n="sidebar.logout">Đăng Xuất</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Stats -->
+        <section class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-2xl p-4 sm:p-5 shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-emerald-100 text-xs sm:text-sm mb-1 font-medium whitespace-nowrap" data-i18n="ets.workCount">Số công hiện tại</p>
+                        <p id="etsWorkCount" class="text-2xl sm:text-3xl font-bold">0</p>
+                    </div>
+                    <div class="p-2 sm:p-3 bg-white/15 rounded-xl flex-shrink-0">
+                        <i class="fas fa-briefcase text-xl sm:text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-2xl p-4 sm:p-5 shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-orange-100 text-xs sm:text-sm mb-1 font-medium whitespace-nowrap" data-i18n="ets.leaveCount">Số ngày nghỉ</p>
+                        <p id="etsLeaveCount" class="text-2xl sm:text-3xl font-bold">0</p>
+                    </div>
+                    <div class="p-2 sm:p-3 bg-white/15 rounded-xl flex-shrink-0">
+                        <i class="fas fa-plane-departure text-xl sm:text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gradient-to-br from-red-500 to-red-600 text-white rounded-2xl p-4 sm:p-5 shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-red-100 text-xs sm:text-sm mb-1 font-medium whitespace-nowrap" data-i18n="ets.unauthorizedCount">Nghỉ không phép</p>
+                        <p id="etsUnauthorizedCount" class="text-2xl sm:text-3xl font-bold">0</p>
+                    </div>
+                    <div class="p-2 sm:p-3 bg-white/15 rounded-xl flex-shrink-0">
+                        <i class="fas fa-ban text-xl sm:text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white rounded-2xl p-4 sm:p-5 shadow-lg">
+                <div class="flex items-center justify-between">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-indigo-100 text-xs sm:text-sm mb-1 font-medium whitespace-nowrap" data-i18n="ets.nightShiftCount">Số ca đêm</p>
+                        <p id="etsNightShiftCount" class="text-2xl sm:text-3xl font-bold">0</p>
+                    </div>
+                    <div class="p-2 sm:p-3 bg-white/15 rounded-xl flex-shrink-0">
+                        <i class="fas fa-moon text-xl sm:text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bộ lọc -->
+        <section class="bg-white rounded-2xl shadow-lg p-5 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-slate-700 font-semibold mb-2 text-sm" data-i18n="ets.fromDate">Từ ngày</label>
+                    <input id="etsFilterDateFrom" type="date"
+                        class="w-full px-4 py-2 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 transition-all text-sm"
+                        onchange="etsFilterTimesheets()">
+                </div>
+                <div>
+                    <label class="block text-slate-700 font-semibold mb-2 text-sm" data-i18n="ets.toDate">Đến ngày</label>
+                    <input id="etsFilterDateTo" type="date"
+                        class="w-full px-4 py-2 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 transition-all text-sm"
+                        onchange="etsFilterTimesheets()">
+                </div>
+                <div>
+                    <label class="block text-slate-700 font-semibold mb-2 text-sm" data-i18n="ets.filterStatus">Lọc theo xác nhận</label>
+                    <select id="etsFilterStatus"
+                        class="w-full px-4 py-2 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 transition-all text-sm bg-white"
+                        onchange="etsFilterTimesheets()">
+                        <option value="all" data-i18n="ets.statusAll">Tất cả bảng công</option>
+                        <option value="unconfirmed" data-i18n="ets.statusUnconfirmed">Chưa xác nhận</option>
+                        <option value="correct" data-i18n="ets.statusCorrectOnly">Đã xác nhận ĐÚNG</option>
+                        <option value="wrong" data-i18n="ets.statusWrongOnly">Đã xác nhận SAI</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bảng công -->
+        <section class="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div class="bg-gradient-to-r from-slate-800 to-slate-900 p-4 border-b border-slate-700">
+                <h2 class="text-white font-semibold flex items-center">
+                    <i class="fas fa-table mr-2 text-blue-400"></i>
+                    <span data-i18n="ets.list">Danh sách Bảng công</span>
+                </h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[1300px] text-[10px] sm:text-xs">
+                    <thead class="bg-gradient-to-r from-slate-100 to-slate-200">
+                        <tr>
+                            <th class="px-1 sm:px-2 py-1.5 sm:py-2 text-left text-slate-700 font-bold text-[10px] sm:text-xs whitespace-nowrap" data-i18n="ets.id">ID</th>
+                            <th class="px-1 sm:px-2 py-1.5 sm:py-2 text-left text-slate-700 font-bold text-[10px] sm:text-xs whitespace-nowrap" data-i18n="ets.employee">Nhân viên</th>
+                            <th class="px-1 sm:px-2 py-1.5 sm:py-2 text-left text-slate-700 font-bold text-[10px] sm:text-xs whitespace-nowrap" data-i18n="employee.projectCode">Mã dự án</th>
+                            <th class="px-1 sm:px-2 py-1.5 sm:py-2 text-left text-slate-700 font-bold text-[10px] sm:text-xs whitespace-nowrap" data-i18n="ets.date">Ngày</th>
+                            <th class="px-1 sm:px-2 py-1.5 sm:py-2 text-left text-slate-700 font-bold text-[10px] sm:text-xs whitespace-nowrap" data-i18n="ets.startTime">Giờ bắt đầu</th>
+                            <th class="px-1 sm:px-2 py-1.5 sm:py-2 text-left text-slate-700 font-bold text-[10px] sm:text-xs whitespace-nowrap" data-i18n="ets.endTime">Giờ kết thúc</th>
+                            <th class="px-1 sm:px-2 py-1.5 sm:py-2 text-left text-slate-700 font-bold text-[10px] sm:text-xs whitespace-nowrap" data-i18n="ets.status">Trạng thái</th>
+                            <th class="px-1 sm:px-2 py-1.5 sm:py-2 text-left text-slate-700 font-bold text-[10px] sm:text-xs whitespace-nowrap" data-i18n="ets.absenceType">Loại nghỉ</th>
+                            <th class="px-1 sm:px-2 py-1.5 sm:py-2 text-left text-slate-700 font-bold text-[10px] sm:text-xs whitespace-nowrap" data-i18n="ets.area">Khu vực</th>
+                            <th class="px-1 sm:px-2 py-1.5 sm:py-2 text-left text-slate-700 font-bold text-[10px] sm:text-xs whitespace-nowrap" data-i18n="ets.notes">Ghi chú</th>
+                            <th class="px-1 sm:px-2 py-1.5 sm:py-2 text-left text-slate-700 font-bold text-[10px] sm:text-xs whitespace-nowrap sticky right-0 bg-slate-100 z-20" data-i18n="ets.actions">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="employeeTimesheetTableBody" class="divide-y divide-slate-200">
+                        <!-- rows -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal lý do sai -->
+    <div id="wrongTimesheetReasonModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl p-8 w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-slate-800">
+                    <span data-i18n="timesheet.feedback">Phản hồi về bảng công</span>
+                </h2>
+                <button onclick="etsCloseWrongModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <form id="wrongTimesheetReasonForm" class="space-y-5">
+                <input type="hidden" id="wrongTimesheetId">
+                <div class="bg-slate-50 p-4 rounded-xl">
+                    <h3 class="font-semibold text-slate-700 mb-2 text-sm" data-i18n="timesheet.feedbackInfo">Thông tin bảng công</h3>
+                    <div id="wrongTimesheetInfo" class="text-sm text-slate-600 space-y-1">
+                        <!-- info -->
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-slate-700 font-semibold mb-2 text-sm">
+                        <i class="fas fa-exclamation-triangle text-orange-600 mr-2"></i>
+                        <span data-i18n="timesheet.wrongReason">Lý do sai</span> <span class="text-red-500">*</span>
+                    </label>
+                    <textarea id="modalWrongReason" rows="4" required
+                        class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 transition-all text-sm"
+                        data-i18n-placeholder="timesheet.wrongReasonPlaceholder" placeholder="Vui lòng mô tả chi tiết lý do bảng công này không chính xác..."></textarea>
+                </div>
+                <div class="bg-orange-50 p-3 rounded-lg border border-orange-200">
+                    <p class="text-sm text-orange-700">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <span data-i18n="timesheet.feedbackNote">Phản hồi của bạn sẽ được gửi đến admin để xử lý. Trạng thái sẽ là "Đang xử lí".</span>
+                    </p>
+                </div>
+                <div class="flex space-x-4 pt-4">
+                    <button type="submit"
+                        class="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all text-sm">
+                        <i class="fas fa-paper-plane mr-2"></i><span data-i18n="timesheet.sendFeedback">Gửi Phản hồi</span>
+                    </button>
+                    <button type="button" onclick="etsCloseWrongModal()"
+                        class="flex-1 bg-slate-200 text-slate-700 py-3 px-4 rounded-xl hover:bg-slate-300 transition-all font-semibold text-sm">
+                        <i class="fas fa-times mr-2"></i><span data-i18n="common.cancel">Hủy</span>
+                    </button>
+                </div>
+            </form>
+            <div id="wrongTimesheetReasonModalError"
+                class="mt-4 bg-red-100 border-l-4 border-red-600 text-red-700 px-4 py-3 rounded-lg text-sm hidden">
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                <span id="wrongTimesheetReasonModalErrorText"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Đổi thông tin -->
+    <div id="editProfileModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl p-6 md:p-8 w-full max-w-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl md:text-2xl font-bold text-slate-800">
+                    <i class="fas fa-user-edit text-blue-600 mr-2"></i>
+                    <span data-i18n="profile.editInfo">Đổi thông tin</span>
+                </h2>
+                <button onclick="etsCloseEditProfileModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <form id="editProfileForm" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-slate-700 font-semibold mb-2 text-sm">
+                            <i class="fas fa-user text-blue-600 mr-2"></i>
+                            <span data-i18n="profile.fullname">Họ và tên</span> <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="editProfileFullname" required
+                            class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 transition-all text-sm"
+                            data-i18n-placeholder="profile.fullnamePlaceholder" placeholder="Nhập họ và tên">
+                    </div>
+                    <div>
+                        <label class="block text-slate-700 font-semibold mb-2 text-sm">
+                            <i class="fas fa-user-circle text-blue-600 mr-2"></i>
+                            <span data-i18n="profile.fullnameOther">Họ và tên khác</span>
+                        </label>
+                        <input type="text" id="editProfileFullnameOther"
+                            class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 transition-all text-sm"
+                            data-i18n-placeholder="profile.fullnameOtherPlaceholder" placeholder="Nhập họ và tên khác">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-slate-700 font-semibold mb-2 text-sm">
+                            <i class="fas fa-globe text-blue-600 mr-2"></i>
+                            <span data-i18n="profile.type">Nhân viên VN/TQ</span> <span class="text-red-500">*</span>
+                        </label>
+                        <select id="editProfileType" required
+                            class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 transition-all text-sm bg-white">
+                            <option value="1" data-i18n="profile.typeVN">VN (Việt Nam)</option>
+                            <option value="2" data-i18n="profile.typeTQ">TQ (Trung Quốc)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-slate-700 font-semibold mb-2 text-sm">
+                            <i class="fas fa-tag text-blue-600 mr-2"></i>
+                            <span data-i18n="profile.sale">Sale</span>
+                        </label>
+                        <input type="text" id="editProfileSale"
+                            class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 transition-all text-sm"
+                            data-i18n-placeholder="profile.salePlaceholder" placeholder="Nhập Sale">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-slate-700 font-semibold mb-2 text-sm">
+                        <i class="fas fa-passport text-blue-600 mr-2"></i>
+                        <span data-i18n="profile.visaExtension">Gia hạn Visa</span>
+                    </label>
+                    <input type="number" id="editProfileVisaExtension" min="0"
+                        class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 transition-all text-sm"
+                        data-i18n-placeholder="profile.visaExtensionPlaceholder" placeholder="Nhập số ngày gia hạn visa">
+                </div>
+                <div id="editProfileModalError"
+                    class="bg-red-100 border-l-4 border-red-600 text-red-700 px-4 py-3 rounded-lg text-sm hidden">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    <span id="editProfileModalErrorText"></span>
+                </div>
+                <div class="flex space-x-4 pt-4">
+                    <button type="submit"
+                        class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all text-sm">
+                        <i class="fas fa-save mr-2"></i><span data-i18n="common.save">Lưu</span>
+                    </button>
+                    <button type="button" onclick="etsCloseEditProfileModal()"
+                        class="flex-1 bg-slate-200 text-slate-700 py-3 px-4 rounded-xl hover:bg-slate-300 transition-all font-semibold text-sm">
+                        <i class="fas fa-times mr-2"></i><span data-i18n="common.cancel">Hủy</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Đổi mật khẩu -->
+    <div id="changePasswordModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-slate-800">
+                    <i class="fas fa-key text-orange-600 mr-2"></i>
+                    <span data-i18n="profile.changePassword">Đổi mật khẩu</span>
+                </h2>
+                <button onclick="etsCloseChangePasswordModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <form id="changePasswordForm" class="space-y-5">
+                <div>
+                    <label class="block text-slate-700 font-semibold mb-2 text-sm">
+                        <i class="fas fa-lock text-orange-600 mr-2"></i>
+                        <span data-i18n="profile.oldPassword">Mật khẩu cũ</span> <span class="text-red-500">*</span>
+                    </label>
+                    <input type="password" id="changePasswordCurrent" required
+                        class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-orange-500 transition-all text-sm"
+                        data-i18n-placeholder="profile.oldPasswordPlaceholder" placeholder="Nhập mật khẩu cũ">
+                </div>
+                <div>
+                    <label class="block text-slate-700 font-semibold mb-2 text-sm">
+                        <i class="fas fa-lock text-orange-600 mr-2"></i>
+                        <span data-i18n="profile.newPassword">Mật khẩu mới</span> <span class="text-red-500">*</span>
+                    </label>
+                    <input type="password" id="changePasswordNew" required
+                        class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-orange-500 transition-all text-sm"
+                        data-i18n-placeholder="profile.newPasswordPlaceholder" placeholder="Nhập mật khẩu mới">
+                </div>
+                <div>
+                    <label class="block text-slate-700 font-semibold mb-2 text-sm">
+                        <i class="fas fa-lock text-orange-600 mr-2"></i>
+                        <span data-i18n="profile.confirmNewPassword">Nhập lại mật khẩu mới</span> <span class="text-red-500">*</span>
+                    </label>
+                    <input type="password" id="changePasswordConfirm" required
+                        class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-orange-500 transition-all text-sm"
+                        data-i18n-placeholder="profile.confirmNewPasswordPlaceholder" placeholder="Nhập lại mật khẩu mới">
+                </div>
+                <div id="changePasswordModalError"
+                    class="bg-red-100 border-l-4 border-red-600 text-red-700 px-4 py-3 rounded-lg text-sm hidden">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    <span id="changePasswordModalErrorText"></span>
+                </div>
+                <div class="flex space-x-4 pt-4">
+                    <button type="submit"
+                        class="flex-1 bg-orange-500 hover:bg-orange-600 text-white py-3 px-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all text-sm">
+                        <i class="fas fa-save mr-2"></i><span data-i18n="common.save">Lưu</span>
+                    </button>
+                    <button type="button" onclick="etsCloseChangePasswordModal()"
+                        class="flex-1 bg-slate-200 text-slate-700 py-3 px-4 rounded-xl hover:bg-slate-300 transition-all font-semibold text-sm">
+                        <i class="fas fa-times mr-2"></i><span data-i18n="common.cancel">Hủy</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="employee-timesheet.js"></script>
+    <script>
+        // Apply translations on page load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                applyTranslations();
+                // Update placeholders
+                document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                    const key = el.getAttribute('data-i18n-placeholder');
+                    el.placeholder = t(key);
+                });
+            });
+        } else {
+            applyTranslations();
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                el.placeholder = t(key);
+            });
+        }
+    </script>
+</body>
+</html>
+
+
