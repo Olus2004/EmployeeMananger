@@ -4,14 +4,25 @@
 [![.NET](https://img.shields.io/badge/.NET%20Core%208.0-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=c-sharp&logoColor=white)](https://docs.microsoft.com/en-us/dotnet/csharp/)
 [![SQL Server](https://img.shields.io/badge/SQL%20Server-CC2927?style=for-the-badge&logo=microsoft-sql-server&logoColor=white)](https://www.microsoft.com/en-us/sql-server/)
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![OpenClaw AI](https://img.shields.io/badge/AI%20Agent-OpenClaw-FF6B6B?style=for-the-badge&logo=openai&logoColor=white)](https://github.com/OpenClaw)
 
 ---
 
 ## 📝 Giới thiệu | Introduction
-Đây là hệ thống quản lý nhân sự hiện đại, được thiết kế để tối ưu hóa quy trình vận hành trong doanh nghiệp. Hệ thống tích hợp **AI Agent** thông minh nhằm tự động hóa việc theo dõi, phân tích hiệu suất và hỗ trợ ra quyết định nhanh chóng.
+Đây là hệ thống quản lý nhân sự hiện đại, được thiết kế để tối ưu hóa quy trình vận hành trong doanh nghiệp. Hệ thống tích hợp **OpenClaw AI Agent** - trợ lý quản lý web thông minh giúp tự động hóa việc theo dõi, phân tích dữ liệu và hỗ trợ ra quyết định nhanh chóng.
 
-This is a modern HR management system designed to optimize enterprise operations. The system integrates an intelligent **AI Agent** to automate monitoring, analyze performance, and support rapid decision-making.
+This is a modern HR management system designed to optimize enterprise operations. The system integrates **OpenClaw AI Agent**, an intelligent web management assistant that automates monitoring, data analysis, and supports rapid decision-making.
+
+---
+
+## 🤖 AI Agent: OpenClaw
+**OpenClaw** đóng vai trò là "bộ não" trung tâm của hệ thống với các khả năng vượt trội:
+- 🧠 **Xử lý Ngôn ngữ Tự nhiên**: Tra cứu thông tin nhân sự và bảng công qua câu hỏi tự nhiên.
+- ⚙️ **Tự động hóa Quy trình**: Hỗ trợ xuất báo cáo, phân bổ dự án và gửi thông báo tự động.
+- 📈 **Phân tích Dự đoán**: Đưa ra các nhận định về hiệu suất làm việc và xu hướng nghỉ phép của nhân lực.
+- 🛠️ **Quản lý Tập trung**: Giúp quản trị viên điều hành hệ thống qua giao diện hội thoại thông minh.
 
 ---
 
