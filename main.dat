@@ -1,0 +1,164 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const EmployeeManagerApp());
+}
+
+class EmployeeManagerApp extends StatelessWidget {
+  const EmployeeManagerApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Employee Manager Intro',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        useMaterial3: true,
+      ),
+      home: const ProjectIntroScreen(),
+    );
+  }
+}
+
+class ProjectIntroScreen extends StatelessWidget {
+  const ProjectIntroScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Giới thiệu Dự án', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHeader(),
+            const SizedBox(height: 32),
+            _buildSectionTitle('💻 Công nghệ nền tảng'),
+            _buildTechChip('Flutter / Dart (Mobile & Web Client)'),
+            _buildTechChip('C# .NET 8 (API Backend)'),
+            _buildTechChip('TailwindCSS & JS (Web Admin UI)'),
+            const SizedBox(height: 24),
+            _buildSectionTitle('🌟 Tính năng cốt lõi'),
+            _buildFeatureList(),
+            const SizedBox(height: 32),
+            _buildAIAgentCard(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Tiêu đề chính của màn hình
+  Widget _buildHeader() {
+    return const Center(
+      child: Column(
+        children: [
+          Icon(Icons.business_center, size: 64, color: Colors.blueAccent),
+          SizedBox(height: 16),
+          Text(
+            'Employee Management System',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 8),
+          Text(
+            'Hệ thống Quản lý Nhân sự & Phân bổ Dự án (Enterprise SaaS)',
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Block tiêu đề các nhóm
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: Text(
+        title,
+        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  // Hiển thị công nghệ dạng nhãn Label (Chip)
+  Widget _buildTechChip(String tech) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Chip(
+        label: Text(tech, style: const TextStyle(fontWeight: FontWeight.w500)),
+        backgroundColor: Colors.blue.shade50,
+        side: BorderSide.none,
+      ),
+    );
+  }
+
+  // Danh sách checklist tính năng
+  Widget _buildFeatureList() {
+    final features = [
+      'Quản lý Database nhân viên, phân luồng theo Khu vực (Area).',
+      'Đồng bộ Bảng chấm công (Timesheet): Phân ca ngày/đêm, làm Visa, xin nghỉ...',
+      'Quản lý Dự án theo Tháng (Project Month Detail).',
+      'Đồng bộ đa nền tảng, thiết kế tối giản, hỗ trợ Darkmode.'
+    ];
+
+    return Column(
+      children: features.map((f) => ListTile(
+        leading: const Icon(Icons.check_circle, color: Colors.green),
+        title: Text(f, style: const TextStyle(fontSize: 15)),
+        contentPadding: EdgeInsets.zero,
+        dense: true,
+      )).toList(),
+    );
+  }
+
+  // Card giới thiệu nổi bật dành riêng cho AI Agent
+  Widget _buildAIAgentCard() {
+    return Card(
+      elevation: 0,
+      color: Colors.indigo.shade50,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: Colors.indigo.shade100, width: 1),
+      ),
+      child: const Padding(
+        padding: EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.auto_awesome, color: Colors.indigo, size: 28),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Tích hợp AI Agent (OpenClaw)',
+                    style: TextStyle(
+                      fontSize: 18, 
+                      fontWeight: FontWeight.bold,
+                      color: Colors.indigo,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 16),
+            Text(
+              '• Web Management Assistant: Trợ lý giúp giám sát và điều hướng thao tác quản lý.\n\n'
+              '• Tự động hoá qua API: Thay vì cấu hình thủ công, AI đọc dữ liệu nhân viên báo cáo tổng quan trực tiếp.\n\n'
+              '• Phân tích dữ liệu: Hỗ trợ tìm kiếm nhanh khu vực, gợi ý điều phối nhân sự thông minh theo từng dự án theo tháng.',
+              style: TextStyle(fontSize: 15, height: 1.5, color: Colors.black87),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
