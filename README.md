@@ -73,5 +73,5 @@ Dự án được phát triển bởi
 - 👤 **Hoàng Gia Minh**
 
 ---
-© 2026 Olus2004 - Hệ thống Quản lý Nhân sự Thông minh....
+© 2026 Olus2004 - Hệ thống Quản lý Nhân sự Thông minh.
 
