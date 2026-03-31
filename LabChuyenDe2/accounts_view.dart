@@ -36,7 +36,6 @@ class AccountsPage extends StatelessWidget {
       ])),
     );
   }
-
   static Widget _r(String id, String user, String status, String date) {
     final sc = {'Active': Colors.green, 'Pending': Colors.orange, 'Off': Colors.red}[status] ?? Colors.grey;
     return Container(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10), decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Color(0xFFF1F5F9)))),
