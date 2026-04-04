@@ -10,6 +10,8 @@ class SchedulesPage extends StatefulWidget {
 
 class _SchedulesPageState extends State<SchedulesPage> {
   List<dynamic> _dailies = [];
+  int _vnCount = 0;
+  int _cnCount = 0;
   bool _isLoading = true;
   String? _error;
 
@@ -23,7 +25,29 @@ class _SchedulesPageState extends State<SchedulesPage> {
     setState(() { _isLoading = true; _error = null; });
     try {
       final data = await ApiService.fetchDailies();
-      setState(() { _dailies = data; _isLoading = false; });
+      final stats = await ApiService.fetchStats();
+      setState(() { 
+        _dailies = data; 
+        _vnCount = stats['vnCount'] ?? 0;
+        _cnCount = stats['cnCount'] ?? 0;
+        _isLoading = false; 
+      });
+    } catch (e) {
+      setState(() { _error = e.toString(); _isLoading = false; });
+    }
+  }
+
+  Future<void> _initializeData() async {
+    setState(() { _isLoading = true; _error = null; });
+    try {
+      final data = await ApiService.initializeDailies();
+      final stats = await ApiService.fetchStats();
+      setState(() { 
+        _dailies = data; 
+        _vnCount = stats['vnCount'] ?? 0;
+        _cnCount = stats['cnCount'] ?? 0;
+        _isLoading = false; 
+      });
     } catch (e) {
       setState(() { _error = e.toString(); _isLoading = false; });
     }
@@ -41,22 +65,25 @@ class _SchedulesPageState extends State<SchedulesPage> {
             ]),
             Row(children: [
               Container(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: const Color(0xFFE2E8F0))),
-                child: const Row(children: [Icon(Icons.calendar_today, size: 16, color: Color(0xFF2563EB)), SizedBox(width: 8), Text('28/03/2026', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600))])),
+                child: Row(children: [const Icon(Icons.calendar_today, size: 16, color: Color(0xFF2563EB)), const SizedBox(width: 8), Text('${DateTime.now().day.toString().padLeft(2, '0')}/${DateTime.now().month.toString().padLeft(2, '0')}/${DateTime.now().year}', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600))])),
               const SizedBox(width: 8),
-              OutlinedButton.icon(onPressed: () {}, icon: const Icon(Icons.refresh, size: 16), label: const Text('Tải lại'), style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)))),
+              OutlinedButton.icon(onPressed: _fetchData, icon: const Icon(Icons.refresh, size: 16), label: const Text('Tải lại'), style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)))),
               const SizedBox(width: 8),
-              ElevatedButton.icon(onPressed: () {}, icon: const Icon(Icons.playlist_add, size: 18), label: const Text('Khởi tạo'), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2563EB), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)))),
+              ElevatedButton.icon(onPressed: _initializeData, icon: const Icon(Icons.playlist_add, size: 18), label: const Text('Khởi tạo'), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2563EB), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)))),
             ]),
           ]),
           const SizedBox(height: 24),
           LayoutBuilder(builder: (context, c) {
             int count = c.maxWidth > 900 ? 5 : (c.maxWidth > 600 ? 3 : 2);
+            int total = _dailies.length;
+            int present = _dailies.where((d) => d['status'] == 1).length;
+            int pending = total - present;
             return GridView.count(shrinkWrap: true, physics: const NeverScrollableScrollPhysics(), crossAxisCount: count, crossAxisSpacing: 12, mainAxisSpacing: 12, childAspectRatio: 3.5, children: [
-              _mini('Tổng', '124', const Color(0xFF2563EB), Icons.group),
-              _mini('Đã ĐD', '84', const Color(0xFF10B981), Icons.check_circle),
-              _mini('Chưa ĐD', '40', const Color(0xFFF59E0B), Icons.pending),
-              _mini('VN tháng', '86', const Color(0xFF6366F1), Icons.flag),
-              _mini('CN tháng', '38', const Color(0xFFF43F5E), Icons.flag),
+              _mini('Tổng', '$total', const Color(0xFF2563EB), Icons.group),
+              _mini('Đã ĐD', '$present', const Color(0xFF10B981), Icons.check_circle),
+              _mini('Chưa ĐD', '$pending', const Color(0xFFF59E0B), Icons.pending),
+              _mini('VN tháng', '$_vnCount', const Color(0xFF6366F1), Icons.flag),
+              _mini('CN tháng', '$_cnCount', const Color(0xFFF43F5E), Icons.flag),
             ]);
           }),
           const SizedBox(height: 24),
